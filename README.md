@@ -33,3 +33,9 @@ ios6-apps/
 ```
 
 To add an app, create `apps/<app-name>/`, add its independent Xcode project to the root workspace, and register it in the table above. See the [project layout guide](docs/project-layout.md).
+
+## License
+
+This project is licensed under the [MIT License](LICENSE).
+
+Third-party data and services remain subject to their own licenses and terms; see [Weather data and references](apps/weather/README.md#data-and-references). The MIT License does not grant rights to third-party trademarks or materials. This is an independent project and is not affiliated with, sponsored by, or endorsed by Apple Inc.
