@@ -30,6 +30,7 @@
 | 中英文完整回归 | iPhone Air / iOS 26.2 | 50 项通过；启用全部 4 项可选在线／定位测试，无失败、跳过或编译警告 |
 | 最终地名来源保护回归 | iPhone Air / iOS 26.2 | 18 项定位语言／搜索测试通过，含新增的外国名称保护和真实泉山区联调，无失败、跳过或编译警告 |
 | 最终中英文小屏兼容性回归 | iPhone SE 第三代 / iOS 17.5 | 最终 51 项全部通过；启用全部可选测试，无失败、跳过或编译警告 |
+| 中英文版真机更新与独立运行 | iPhone Air / iOS 27.0.1，Personal Team | 用户解锁后 Xcode 显示 Running WeatherSix；正常 detach 并退出 Xcode，设备进程列表确认 WeatherSix（PID 5181）仍在运行；真机语言切换的手动复测尚未反馈 |
 | Swift 格式与编译 | Xcode 自带 swift-format、XcodeBuildMCP | strict lint、编译通过；最终检查无警告或错误 |
 | 顶层重命名 | weather-ios6 → ios6-apps | 111 个文件的 SHA-256 在重命名前后相同，包含 Git 元数据 |
 
@@ -89,6 +90,8 @@ iOS 26+ 使用 MKReverseGeocodingRequest，iOS 17 使用 CLGeocoder。原生定�
 新区县搜索及真实天气截图位于 `screenshots/place-search/iphone-air/` 与 `screenshots/place-search/iphone-se/`，每种设备各两张。地名解析回归使用实际 Photon 响应样本：`photon-quanshan-chinese.json`、`photon-quanshan-pinyin.json`、`photon-baiyun.json` 及 `photon-uk-postcode.json`。数据来源与 OpenStreetMap／ODbL 署名已在 Add City 及 About 中显示；公共地名服务覆盖和可用性由上游数据决定。
 
 经典开关截图位于 `screenshots/classic-switch/`：Air 的 ON/OFF 实际状态及 Air、SE 的 XCTest 原始城市管理截图。当前开关外观修复已在模拟器验证，且已在真机构建、安装和启动。退出 Xcode 前正常解除调试器连接，退出后通过设备进程列表确认 App 继续独立运行；用户尚未反馈本版的真机视觉复测。
+
+中英文适配版已在同一真机构建、安装并启动。退出 Xcode 后通过 devicectl 确认 WeatherSix 继续独立运行，同时确认 Xcode 主程序已退出。尚未收到用户对本版中英文界面与搜索的手动真机复测反馈。
 
 真机测试使用正常 Run，未运行会设置伦敦模拟坐标的定位 UI 测试；Run 的模拟定位配置已关闭。安装及启动结果由 Xcode 界面确认，真机定位通过来自用户的手动实测反馈，未采集自动化真机定位结果。
 
