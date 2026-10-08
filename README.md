@@ -33,9 +33,3 @@ ios6-apps/
 ```
 
 To add an app, create `apps/<app-name>/`, add its independent Xcode project to the root workspace, and register it in the table above. See the [project layout guide](docs/project-layout.md).
-
-## Development conventions
-
-All README files in this collection, including future apps, must be written in English. Code comments and Git commit messages must also use English; replies to the project owner use Chinese. Follow the root `AGENTS.md` for the complete development instructions.
-
-The collection directory has been renamed from `weather-ios6` to `ios6-apps`. Existing editor sessions may retain the old path; reopen the project using the new directory before continuing development. The original Git metadata has been preserved at the collection root.
