@@ -24,10 +24,15 @@
 | Add City 完整回归及区县在线联调 | iPhone Air / iOS 26.2 | 37 项通过；30 项核心单元测试、5 项常规 UI 及 2 项新在线测试，无失败、跳过或编译警告 |
 | Add City 兼容性及小屏在线联调 | iPhone SE 第三代 / iOS 17.5 | 34 项相关测试通过；包含完整单元测试、城市操作、小屏 About 及真实泉山区搜索／添加／预报加载 |
 | 搜索修复版真机更新 | iPhone Air / iOS 27.0.1 | Xcode 完成构建、安装并显示 Running WeatherSix on Max’s iPhone Air；用户尚未反馈本版的手动搜索复测 |
+| 经典开关界面回归 | iPhone Air / iOS 26.2、iPhone SE 第三代 / iOS 17.5 | Air 的 3 项相关 UI 测试及 SE 的 2 项通过，无失败、跳过或编译警告；两种尺寸截图已检查 |
+| 经典开关交互与语义 | iPhone Air / iOS 26.2，Codex 内置浏览器镜像 | 滑块点击、整行点击及双向拖动成功；无障碍树保持 switch 角色、Demo Weather 标签及 0/1 状态，开启后显示 23°C Demo 预报 |
+| 经典开关真机更新与独立运行 | iPhone Air / iOS 27.0.1，Personal Team | Xcode 完成构建、安装并显示 Running WeatherSix；随后 LLDB 正常 detach，退出 Xcode 后确认手机 WeatherSix 进程仍在运行 |
 | Swift 格式与编译 | Xcode 自带 swift-format、XcodeBuildMCP | strict lint、编译通过；最终检查无警告或错误 |
 | 顶层重命名 | weather-ios6 → ios6-apps | 111 个文件的 SHA-256 在重命名前后相同，包含 Git 元数据 |
 
 目前 30 项核心单元测试包括 8 项定位状态测试、闪电轮廓、区县／拼音结果、省市层级、邮编、缓存、取消及服务降级、附近不同区县与天气时区保存。5 项常规 UI 测试覆盖城市管理、昼夜页面、温标切换、小屏小时列表、About、翻面及顶部图标遮挡。另有 4 项可选在线测试：原天气／搜索、原生定位、新区县服务联调、新区县 UI 流程。本次启用后两项，原两项未重复运行。
+
+经典开关修复将 Demo Weather 的系统默认 Toggle 外观替换为 ClassicToggleStyle：不透明蓝色 ON 槽、灰色 OFF 槽、带高光与阴影的白色滑块。绘制不使用系统玻璃材质，支持点击与拖动，保留 44 点点击区域，并遵守 Reduce Motion。通过仅用于无障碍的原生 Toggle 表示保留开关语义。本次按界面改动范围运行已有城市／温标／搜索、翻面及小屏 About 流程，未重复运行无关天气服务和定位测试。Air 镜像已更新并保留在城市管理页；恢复了检查前的关闭 Demo 状态。
 
 Add City 修复已复现并在线确认：原 GeoNames 搜索返回浙江、辽宁等省份的同名 Quanshan 地点，却查不到徐州泉山区；原结果仅显示省份与国家，缺少上级城市。新搜索使用 Photon／OpenStreetMap 的行政地点索引，保留 GeoNames 作为备用，优先筛选城市、区县、乡镇等地点并排除电站等土地使用对象。结果保留上级市／县、省／州及国家，重复行政地点合并显示，缺失的层级不编造补全。
 
@@ -62,10 +67,14 @@ iOS 26+ 使用 MKReverseGeocodingRequest，iOS 17 使用 CLGeocoder。原生定�
 - `/private/tmp/ios6-apps-large-artwork-se.xcresult`：最终放大后的三项头部／小屏回归。
 - `/private/tmp/ios6-apps-place-search-air.xcresult`：Add City 修复后，Air 的 37 项测试及两项新区县在线联调。
 - `/private/tmp/ios6-apps-place-search-se.xcresult`：Add City 修复后，SE 的 34 项兼容性／界面与在线验证。
+- `/private/tmp/ios6-apps-classic-switch-air.xcresult`：经典开关修复后，Air 的 3 项相关 UI 回归。
+- `/private/tmp/ios6-apps-classic-switch-se.xcresult`：经典开关修复后，SE 的 2 项城市管理及小屏回归。
 
 截图保存在本目录的 `screenshots/`。`screenshots/header/` 保留最初的遮挡修复记录；最新放大版分别位于 `screenshots/optical/iphone-air/` 与 `screenshots/optical/iphone-se/`，每种设备 11 张截图。9 种昼夜图标对比图为 `screenshots/optical/comparison-air.png`。实际文件与新的开发入口都位于 `ios6-apps`。旧路径的临时符号链接因不受 Codex 文件沙箱支持已移除；已有 Codex 项目需要重新选择新目录。
 
 新区县搜索及真实天气截图位于 `screenshots/place-search/iphone-air/` 与 `screenshots/place-search/iphone-se/`，每种设备各两张。地名解析回归使用实际 Photon 响应样本：`photon-quanshan-chinese.json`、`photon-quanshan-pinyin.json`、`photon-baiyun.json` 及 `photon-uk-postcode.json`。数据来源与 OpenStreetMap／ODbL 署名已在 Add City 及 About 中显示；公共地名服务覆盖和可用性由上游数据决定。
+
+经典开关截图位于 `screenshots/classic-switch/`：Air 的 ON/OFF 实际状态及 Air、SE 的 XCTest 原始城市管理截图。当前开关外观修复已在模拟器验证，且已在真机构建、安装和启动。退出 Xcode 前正常解除调试器连接，退出后通过设备进程列表确认 App 继续独立运行；用户尚未反馈本版的真机视觉复测。
 
 真机测试使用正常 Run，未运行会设置伦敦模拟坐标的定位 UI 测试；Run 的模拟定位配置已关闭。安装及启动结果由 Xcode 界面确认，真机定位通过来自用户的手动实测反馈，未采集自动化真机定位结果。
 

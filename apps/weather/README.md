@@ -21,6 +21,7 @@ Add `--demo` under Edit Scheme → Run → Arguments to launch in demo mode. Dem
 - A horizontally scrolling 12-hour forecast, with an hourly list option on compact screens.
 - City paging, page indicators, a local weather indicator, a 3D flip transition, and Reduce Motion support.
 - Dark linen city management, gradient navigation buttons, unit selection, city search, confirmed deletion, and drag reordering.
+- A custom iOS 6-style ON/OFF switch with an opaque blue/gray track, a shaded white thumb, tap and drag interaction, and native accessibility semantics. Its appearance stays consistent across supported iOS versions, and its animation respects Reduce Motion.
 - Global city, district, county, and postcode search with Chinese and pinyin support. Results include the parent city, county, province/state, and country where available, with duplicate administrative results and non-place features filtered out.
 - App icon digits centered beneath the sun, with a separate superscript degree symbol.
 - Complete thunderstorm lightning geometry, with both tips and room for its glow.
@@ -48,6 +49,8 @@ The 30 core unit tests cover default units and preference migration, conversions
 
 The place-search update passed **37 tests on iPhone Air / iOS 26.2** and **34 relevant tests on iPhone SE / iOS 17.5**, including both new online integration tests on each device. Live validation found the same Quanshan district using Chinese, combined city/district, and pinyin queries, verified Xuzhou/Jiangsu context, added it through the actual Add City UI, and loaded a live Celsius forecast with the Asia/Shanghai time zone. UK postcode search also resolved Guildford correctly.
 
+The classic switch update passed **3 relevant UI tests on iPhone Air / iOS 26.2** and **2 on iPhone SE / iOS 17.5**, with no failures, skips, or compiler warnings. Manual Air validation through the browser mirror confirmed thumb and row taps, dragging in both directions, correct accessible switch values, and the resulting demo forecast. The `classic-switch/` screenshots record the opaque ON/OFF appearance and both screen sizes.
+
 Earlier native location verification covered denied permission, the recovery message, opening the app's Settings page, granting permission, receiving simulated coordinates, resolving the city, and loading a live Celsius forecast. The older iOS path uses CLGeocoder; iOS 26 and later use MapKit reverse geocoding. Live weather/search and native location remain separate optional integration tests.
 
 Run these commands from this app's directory:
@@ -69,7 +72,7 @@ For live weather and search, set `WEATHER_LIVE_TESTS=1` in the scheme's Test env
 
 For district search integration, set `WEATHER_SEARCH_TESTS=1` and run `PlaceSearchTests.testLiveChineseDistrictSearchAndForecast` and `WeatherSixUITests.testLiveDistrictSearchAndForecast`. These opt-in tests use real geocoding and forecast services.
 
-On 2026-10-08, the app was built, installed, and launched on a physical iPhone Air running iOS 27.0.1 using Personal Team signing. The device owner confirmed that manual current-location testing worked. This is user-reported verification; location accuracy and the software-simulation source flag were not captured. Location simulation is disabled for the normal Run action. The latest place-search update was rebuilt, installed, and launched on the same device; the owner has not yet reported a manual retest of this update. Larger header artwork, complete lightning, and centered app icon digits are also included.
+On 2026-10-08, the app was built, installed, and launched on a physical iPhone Air running iOS 27.0.1 using Personal Team signing. The device owner confirmed that manual current-location testing worked. This is user-reported verification; location accuracy and the software-simulation source flag were not captured. Location simulation is disabled for the normal Run action. The latest place-search and classic switch updates were rebuilt, installed, and launched on the same device; the owner has not yet reported a manual retest of these updates. The debugger was detached before quitting Xcode, and the app's device process was confirmed to remain running afterward. Larger header artwork, complete lightning, and centered app icon digits are also included.
 
 Release signing has not been verified. Location requests use foreground access without background tracking. If location permission was previously denied, tap Open Settings and allow access while using the app. Simulator also requires a configured simulated location.
 

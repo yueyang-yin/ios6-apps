@@ -50,6 +50,93 @@ struct ClassicButtonStyle: ButtonStyle {
   }
 }
 
+struct ClassicToggleStyle: ToggleStyle {
+  @Environment(\.accessibilityReduceMotion) private var reduceMotion
+  @Environment(\.isEnabled) private var isEnabled
+  @GestureState private var dragOffset: CGFloat = 0
+
+  func makeBody(configuration: Configuration) -> some View {
+    Button {
+      configuration.isOn.toggle()
+    } label: {
+      HStack {
+        configuration.label.font(.custom("HelveticaNeue-Bold", size: 16))
+        Spacer(minLength: 12)
+        switchTrack(isOn: configuration.isOn)
+          .highPriorityGesture(
+            DragGesture(minimumDistance: 8)
+              .updating($dragOffset) { value, offset, _ in
+                if abs(value.translation.width) > abs(value.translation.height) {
+                  offset = value.translation.width
+                }
+              }
+              .onEnded { value in
+                guard isEnabled,
+                  abs(value.translation.width) > abs(value.translation.height)
+                else { return }
+                let start: CGFloat = configuration.isOn ? 40 : 0
+                configuration.isOn = start + value.predictedEndTranslation.width > 20
+              })
+      }
+      .frame(minHeight: 44)
+      .contentShape(Rectangle())
+    }
+    .buttonStyle(.plain)
+    .opacity(isEnabled ? 1 : 0.5)
+    .animation(reduceMotion ? nil : .easeInOut(duration: 0.18), value: configuration.isOn)
+    .accessibilityRepresentation {
+      Toggle(isOn: configuration.$isOn) { configuration.label }
+        .toggleStyle(.switch)
+    }
+  }
+
+  private func switchTrack(isOn: Bool) -> some View {
+    ZStack(alignment: .leading) {
+      RoundedRectangle(cornerRadius: 13)
+        .fill(
+          LinearGradient(
+            stops: isOn
+              ? [
+                .init(color: Color(hex: 0x1551ad), location: 0),
+                .init(color: Color(hex: 0x2877de), location: 0.49),
+                .init(color: Color(hex: 0x408bea), location: 0.5),
+                .init(color: Color(hex: 0x69a6f5), location: 1),
+              ]
+              : [
+                .init(color: Color(hex: 0xaaaaaa), location: 0),
+                .init(color: Color(hex: 0xd7d7d7), location: 0.49),
+                .init(color: Color(hex: 0xe6e6e6), location: 0.5),
+                .init(color: Color(hex: 0xf8f8f8), location: 1),
+              ], startPoint: .top, endPoint: .bottom))
+      HStack(spacing: 0) {
+        Text("ON").foregroundStyle(.white)
+          .shadow(color: .black.opacity(0.4), radius: 0, y: -1)
+          .frame(width: 40)
+        Text("OFF").foregroundStyle(Color(hex: 0x777777))
+          .shadow(color: .white, radius: 0, y: 1)
+          .frame(width: 40)
+      }
+      .font(.custom("HelveticaNeue-Bold", size: 15))
+      .frame(width: 80)
+      RoundedRectangle(cornerRadius: 12)
+        .fill(
+          LinearGradient(
+            colors: [.white, Color(hex: 0xf0f0f0), Color(hex: 0xd4d4d4)],
+            startPoint: .top, endPoint: .bottom)
+        )
+        .overlay { RoundedRectangle(cornerRadius: 12).stroke(.white, lineWidth: 1) }
+        .shadow(color: .black.opacity(0.6), radius: 1, x: isOn ? -1 : 1, y: 1)
+        .frame(width: 38, height: 26)
+        .offset(x: 1 + min(max((isOn ? 40 : 0) + dragOffset, 0), 40))
+    }
+    .frame(width: 80, height: 28)
+    .environment(\.layoutDirection, .leftToRight)
+    .clipShape(RoundedRectangle(cornerRadius: 13))
+    .overlay { RoundedRectangle(cornerRadius: 13).stroke(.black.opacity(0.6), lineWidth: 1) }
+    .shadow(color: .white.opacity(0.2), radius: 0, y: 1)
+  }
+}
+
 struct ClassicNavigationBar<Leading: View, Trailing: View>: View {
   var title: String
   @ViewBuilder var leading: () -> Leading

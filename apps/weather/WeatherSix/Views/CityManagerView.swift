@@ -200,14 +200,11 @@ struct CityManagerView: View {
   }
 
   private var modePicker: some View {
-    HStack {
-      Text("Demo Weather").font(.custom("HelveticaNeue-Bold", size: 16))
-      Spacer()
-      Toggle("Demo Weather", isOn: $store.demoMode).labelsHidden().tint(Color(hex: 0x4388e9))
-        .accessibilityIdentifier("demoWeather")
-    }
-    .padding(.horizontal, 14).padding(.vertical, 9)
-    .background(.black.opacity(0.2)).clipShape(RoundedRectangle(cornerRadius: 9))
+    Toggle("Demo Weather", isOn: $store.demoMode)
+      .toggleStyle(ClassicToggleStyle())
+      .accessibilityIdentifier("demoWeather")
+      .padding(.horizontal, 14).padding(.vertical, 2)
+      .background(.black.opacity(0.2)).clipShape(RoundedRectangle(cornerRadius: 9))
   }
 }
 
