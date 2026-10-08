@@ -7,6 +7,7 @@ struct WeatherSixApp: App {
   var body: some Scene {
     WindowGroup {
       WeatherRootView(store: store)
+        .environment(\.locale, AppLanguage.current.locale)
         .preferredColorScheme(.dark)
         .tint(.white)
     }

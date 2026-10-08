@@ -17,18 +17,31 @@ actor PlaceSearchService {
     self.minimumInterval = minimumInterval
   }
 
-  func search(_ query: String, session: URLSession = .shared) async throws -> [WeatherCity] {
+  func search(
+    _ query: String, session: URLSession = .shared, language: AppLanguage? = nil
+  ) async throws -> [WeatherCity] {
     let value = query.trimmingCharacters(in: .whitespacesAndNewlines)
     guard value.count >= 2 else { return [] }
-    let key = value.folding(options: [.caseInsensitive, .diacriticInsensitive], locale: .current)
+    let language = language ?? AppLanguage.searchLanguage(for: value)
+    let key =
+      language.rawValue + "|"
+      + value.folding(
+        options: [.caseInsensitive, .diacriticInsensitive],
+        locale: Locale(identifier: "en_US_POSIX"))
     try Task.checkCancellation()
     if let entry = cache[key], entry.expires > Date() { return entry.cities }
 
     do {
       let response: PlaceSearchResponse = try await fetch(
-        Self.request(for: value), session: session)
-      let cities = response.cities(for: value)
+        Self.request(for: value, language: language), session: session)
+      var cities = response.cities(for: value, language: language)
       if !cities.isEmpty {
+        do {
+          let translated: PlaceSearchResponse = try await fetch(
+            Self.request(for: value, language: language.other), session: session)
+          cities = Self.mergingLabels(
+            cities, translated.cities(for: value, language: language.other))
+        } catch { try Task.checkCancellation() }
         remember(cities, key: key, lifetime: 900)
         return cities
       }
@@ -38,10 +51,35 @@ actor PlaceSearchService {
 
     // Retain the original provider when the broader place index is unavailable or incomplete.
     let response: GeocodingResponse = try await fetch(
-      Self.fallbackRequest(for: value), session: session)
-    let cities = response.cities
+      Self.fallbackRequest(for: value, language: language), session: session)
+    var cities = response.cities(language: language)
+    if !cities.isEmpty {
+      do {
+        let translated: GeocodingResponse = try await fetch(
+          Self.fallbackRequest(for: value, language: language.other), session: session)
+        cities = Self.mergingLabels(cities, translated.cities(language: language.other))
+      } catch { try Task.checkCancellation() }
+    }
     if !cities.isEmpty { remember(cities, key: key, lifetime: 60) }
     return cities
+  }
+
+  private static func mergingLabels(_ cities: [WeatherCity], _ translations: [WeatherCity])
+    -> [WeatherCity]
+  {
+    let labels = Dictionary(
+      translations.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
+    return cities.map { city in
+      guard let translated = labels[city.id] else { return city }
+      var city = city
+      city.localizedNames = (city.localizedNames ?? [:]).merging(translated.localizedNames ?? [:]) {
+        _, new in new
+      }
+      city.localizedCountries = (city.localizedCountries ?? [:]).merging(
+        translated.localizedCountries ?? [:]
+      ) { _, new in new }
+      return city
+    }
   }
 
   private func fetch<T: Decodable>(_ request: URLRequest, session: URLSession) async throws -> T {
@@ -66,14 +104,14 @@ actor PlaceSearchService {
     cache[key] = CacheEntry(cities: cities, expires: Date().addingTimeInterval(lifetime))
   }
 
-  static func request(for query: String) -> URLRequest {
+  static func request(for query: String, language: AppLanguage? = nil) -> URLRequest {
     let postal = PlaceQuery.isPostalCode(query)
     var components = URLComponents(
       string: "https://photon.komoot.io/\(postal ? "structured" : "api/")")!
     components.queryItems = [
       .init(name: postal ? "postcode" : "q", value: PlaceQuery.normalized(query)),
       .init(name: "limit", value: "30"),
-      .init(name: "lang", value: PlaceQuery.containsHan(query) ? "default" : "en"),
+      .init(name: "lang", value: (language ?? AppLanguage.searchLanguage(for: query)).photonCode),
     ]
     if !postal {
       components.queryItems! += ["city", "district", "county", "locality", "state"].map {
@@ -86,11 +124,16 @@ actor PlaceSearchService {
     return request
   }
 
-  private static func fallbackRequest(for query: String) -> URLRequest {
+  private static func fallbackRequest(for query: String, language: AppLanguage) -> URLRequest {
     var components = URLComponents(string: "https://geocoding-api.open-meteo.com/v1/search")!
     components.queryItems = [
-      .init(name: "name", value: query), .init(name: "count", value: "50"),
-      .init(name: "language", value: PlaceQuery.containsHan(query) ? "zh" : "en"),
+      .init(
+        name: "name",
+        value: PlaceQuery.containsHan(query)
+          ? query.applyingTransform(StringTransform("Simplified-Traditional"), reverse: false)
+            ?? query
+          : query), .init(name: "count", value: "50"),
+      .init(name: "language", value: language.geocodingCode),
       .init(name: "format", value: "json"),
     ]
     var request = URLRequest(url: components.url!)
@@ -152,12 +195,14 @@ struct PlaceSearchResponse: Decodable {
       var county: String?
       var state: String?
       var country: String?
+      var countryCode: String?
       var postcode: String?
 
       enum CodingKeys: String, CodingKey {
         case osmType = "osm_type"
         case osmID = "osm_id"
         case osmKey = "osm_key"
+        case countryCode = "countrycode"
         case type, name, district, city, county, state, country, postcode
       }
     }
@@ -166,7 +211,7 @@ struct PlaceSearchResponse: Decodable {
   }
   var features: [Feature]
 
-  func cities(for query: String) -> [WeatherCity] {
+  func cities(for query: String, language: AppLanguage? = nil) -> [WeatherCity] {
     let postal = PlaceQuery.isPostalCode(query)
     var seen = Set<String>()
     return features.compactMap { feature in
@@ -187,18 +232,28 @@ struct PlaceSearchResponse: Decodable {
       guard latitude.isFinite, longitude.isFinite, (-90...90).contains(latitude),
         (-180...180).contains(longitude)
       else { return nil }
-      let name = postal ? (p.city ?? p.county ?? sourceName) : sourceName
+      let name =
+        language?.normalizePlaceName(
+          postal ? (p.city ?? p.county ?? sourceName) : sourceName, countryCode: p.countryCode)
+        ?? (postal ? (p.city ?? p.county ?? sourceName) : sourceName)
+      let country =
+        language.flatMap { locale in
+          p.countryCode.flatMap { locale.locale.localizedString(forRegionCode: $0.uppercased()) }
+        } ?? p.country
       let context = PlaceQuery.context(
-        [postal ? sourceName : nil, p.district, p.city, p.county, p.state, p.country],
+        [postal ? sourceName : nil, p.district, p.city, p.county, p.state, country].map { part in
+          part.map { language?.normalizePlaceName($0, countryCode: p.countryCode) ?? $0 }
+        },
         excluding: name)
       let id =
         p.osmID.map { "osm-\(p.osmType ?? "N")-\($0)" }
-        ?? "place-\(latitude)-\(longitude)-\(name)"
+        ?? "place-\(p.type ?? "place")-\(latitude)-\(longitude)-\(p.postcode ?? "")"
       let identity = "\(name.lowercased())|\(context.lowercased())"
       guard seen.insert(identity).inserted else { return nil }
       return WeatherCity(
         id: id, name: name, country: context, latitude: latitude, longitude: longitude,
-        timeZone: "GMT")
+        timeZone: "GMT", localizedNames: language.map { [$0.rawValue: name] },
+        localizedCountries: language.map { [$0.rawValue: context] })
     }
   }
 }

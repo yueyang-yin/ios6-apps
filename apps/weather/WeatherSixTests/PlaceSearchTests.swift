@@ -75,14 +75,14 @@ final class PlaceSearchTests: XCTestCase {
     let service = PlaceSearchService(minimumInterval: .zero)
     _ = try await service.search("泉山区", session: session)
     _ = try await service.search("泉山区", session: session)
-    XCTAssertEqual(PlaceSearchURLProtocol.requestCount, 1)
+    XCTAssertEqual(PlaceSearchURLProtocol.requestCount, 2)
 
     let failed = makeSession(photon: photon, photonStatus: 503)
     defer { failed.invalidateAndCancel() }
     let fallback = PlaceSearchService(minimumInterval: .zero)
     let cities = try await fallback.search("Quanshan", session: failed)
     XCTAssertEqual(cities.first?.country, "Lishui Shi, Zhejiang, China")
-    XCTAssertEqual(PlaceSearchURLProtocol.requestCount, 2)
+    XCTAssertEqual(PlaceSearchURLProtocol.requestCount, 3)
   }
 
   func testInvalidCoordinatesAreNotOfferedAndCancellationDoesNotUseFallback() async throws {
@@ -104,6 +104,24 @@ final class PlaceSearchTests: XCTestCase {
     }
   }
 
+  func testResultCacheSeparatesLanguagesForTheSamePostalQuery() async throws {
+    let session = makeSession(photon: try fixture("photon-uk-postcode"))
+    defer { session.invalidateAndCancel() }
+    let service = PlaceSearchService(minimumInterval: .zero)
+    let english = try await service.search("GU1 4TY", session: session, language: .english)
+    let chinese = try await service.search("GU1 4TY", session: session, language: .chinese)
+    XCTAssertEqual(english.first?.name, "Guildford")
+    XCTAssertEqual(chinese.first?.name, "吉尔福德")
+    XCTAssertTrue(chinese.first?.country.contains("英国") == true)
+    XCTAssertEqual(english.first?.id, chinese.first?.id)
+    XCTAssertEqual(english.first?.latitude, chinese.first?.latitude)
+    XCTAssertEqual(PlaceSearchURLProtocol.requestCount, 4)
+    _ = try await service.search("GU1 4TY", session: session, language: .english)
+    _ = try await service.search("GU1 4TY", session: session, language: .chinese)
+    XCTAssertEqual(PlaceSearchURLProtocol.requestCount, 4)
+    XCTAssertEqual(chinese.first?.displayName(language: .english), "Guildford")
+  }
+
   func testLiveChineseDistrictSearchAndForecast() async throws {
     try XCTSkipUnless(
       ProcessInfo.processInfo.environment["WEATHER_SEARCH_TESTS"] == "1",
@@ -112,6 +130,10 @@ final class PlaceSearchTests: XCTestCase {
     for query in ["泉山区", "徐州市泉山区", "QuanShan"] {
       let cities = try await service.search(query)
       let city = try XCTUnwrap(cities.first { $0.id == "osm-R-3218567" })
+      XCTAssertEqual(city.displayName(language: .chinese), "泉山区")
+      XCTAssertEqual(city.displayName(language: .english), "Quanshan")
+      XCTAssertTrue(city.displayCountry(language: .chinese).contains("徐州市"))
+      XCTAssertTrue(city.displayCountry(language: .english).contains("Jiangsu"))
       XCTAssertTrue(city.country.contains(query == "QuanShan" ? "Jiangsu" : "江苏省"))
       XCTAssertTrue(city.country.contains(query == "QuanShan" ? "Xuzhou" : "徐州市"))
       XCTAssertEqual(city.latitude, 34.2273368, accuracy: 0.01)

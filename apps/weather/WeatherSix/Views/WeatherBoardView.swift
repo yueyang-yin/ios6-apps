@@ -79,12 +79,13 @@ struct WeatherBoardView: View {
         VStack(alignment: .leading, spacing: 5) {
           HStack(spacing: 5) {
             if city.isLocal { Image(systemName: "location.fill").font(.system(size: 12)) }
-            Text(city.name).font(ClassicTheme.font(compact ? 21 : 25, bold: true)).lineLimit(1)
+            Text(city.displayName()).font(ClassicTheme.font(compact ? 21 : 25, bold: true))
+              .lineLimit(1)
               .minimumScaleFactor(0.65)
               .accessibilityIdentifier("cityName_\(city.id)")
           }
           if compact {
-            Button(showHourly ? "Daily" : "Hourly") {
+            Button(L10n.text(showHourly ? "Daily" : "Hourly")) {
               withAnimation(.easeInOut(duration: 0.25)) { showHourly.toggle() }
             }.font(ClassicTheme.font(16)).accessibilityIdentifier("hourlyToggle")
           } else {
@@ -107,12 +108,17 @@ struct WeatherBoardView: View {
             .lineLimit(1)
             .accessibilityIdentifier("currentTemperature_\(city.id)")
             .accessibilityLabel(
-              report.map { "\(unit.value($0.temperature)) degrees \(unit.rawValue)" }
-                ?? "Temperature unavailable")
+              report.map {
+                L10n.format(
+                  unit == .celsius ? "%lld degrees celsius" : "%lld degrees fahrenheit",
+                  unit.value($0.temperature))
+              }
+                ?? L10n.text("Temperature unavailable"))
           HStack(spacing: 8) {
             if let today = report?.daily.first {
-              Text("H: \(unit.value(today.high))").foregroundStyle(.white)
-              Text("L: \(unit.value(today.low))").foregroundStyle(.white.opacity(0.45))
+              Text(L10n.format("H: %lld", unit.value(today.high))).foregroundStyle(.white)
+              Text(L10n.format("L: %lld", unit.value(today.low))).foregroundStyle(
+                .white.opacity(0.45))
             }
           }.font(ClassicTheme.font(compact ? 17 : 20))
         }
@@ -211,11 +217,11 @@ struct WeatherBoardView: View {
     VStack(spacing: 15) {
       if loading {
         ProgressView().tint(.white)
-        Text("Updating weather…")
+        Text(L10n.text("Updating weather…"))
       } else {
         Image(systemName: "cloud").font(.system(size: 32))
-        Text(error ?? "Weather isn't available yet.").multilineTextAlignment(.center)
-        Button("Try Again", action: refresh).buttonStyle(ClassicButtonStyle(blue: true))
+        Text(error ?? L10n.text("Weather isn't available yet.")).multilineTextAlignment(.center)
+        Button(L10n.text("Try Again"), action: refresh).buttonStyle(ClassicButtonStyle(blue: true))
       }
     }.font(ClassicTheme.font(17)).padding(24).frame(maxWidth: .infinity)
   }
@@ -227,7 +233,7 @@ struct WeatherBoardView: View {
           .white.opacity(0.55)
         )
         .frame(width: 41, height: 41)
-      }.accessibilityLabel("Weather sources and app information")
+      }.accessibilityLabel(L10n.text("Weather sources and app information"))
       Spacer(minLength: 0)
       Button(action: refresh) {
         HStack(spacing: 4) {
@@ -237,7 +243,9 @@ struct WeatherBoardView: View {
         }.frame(minHeight: 42)
       }
       .accessibilityLabel(
-        demo ? "Demo weather. Open settings to use live weather." : "Refresh weather. \(updateText)"
+        demo
+          ? L10n.text("Demo weather. Open settings to use live weather.")
+          : L10n.format("Refresh weather. %@", updateText)
       )
       .accessibilityIdentifier("refreshWeather")
       Spacer(minLength: 0)
@@ -248,15 +256,16 @@ struct WeatherBoardView: View {
             Color(hex: isDay ? 0x435775 : 0x402444)
           ).offset(y: -0.5)
         }.frame(width: 41, height: 41)
-      }.accessibilityLabel("Manage cities").accessibilityIdentifier("manageCities_\(city.id)")
+      }.accessibilityLabel(L10n.text("Manage cities")).accessibilityIdentifier(
+        "manageCities_\(city.id)")
     }.padding(.horizontal, 6).frame(height: 43)
   }
 
   private var updateText: String {
-    if demo { return "Demo · iOS 6 Weather" }
-    guard let report else { return loading ? "Updating…" : "Tap to update" }
+    if demo { return L10n.text("Demo · iOS 6 Weather") }
+    guard let report else { return L10n.text(loading ? "Updating…" : "Tap to update") }
     let timestamp = WeatherDate.string(
       report.updatedAt, format: "M/d/yy  h:mm a", timeZone: report.timeZone)
-    return (error == nil ? "Updated " : "Offline · ") + timestamp
+    return L10n.format(error == nil ? "Updated %@" : "Offline · %@", timestamp)
   }
 }

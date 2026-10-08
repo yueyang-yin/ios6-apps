@@ -17,11 +17,11 @@ struct CityManagerView: View {
           title: "Weather",
           leading: {
             Button(action: addCity) { Text("+").font(.system(size: 28, weight: .bold)) }
-              .buttonStyle(ClassicButtonStyle()).accessibilityLabel("Add city")
+              .buttonStyle(ClassicButtonStyle()).accessibilityLabel(L10n.text("Add city"))
               .accessibilityIdentifier("addCity")
           },
           trailing: {
-            Button("Done", action: done).buttonStyle(ClassicButtonStyle(blue: true))
+            Button(L10n.text("Done"), action: done).buttonStyle(ClassicButtonStyle(blue: true))
               .accessibilityIdentifier("doneManaging")
           })
         ScrollView {
@@ -32,13 +32,15 @@ struct CityManagerView: View {
             modePicker
             Button(action: about) {
               VStack(spacing: 4) {
-                Text("powered by").font(.custom("HelveticaNeue-Bold", size: 12)).foregroundStyle(
-                  .white.opacity(0.7))
-                Text("Open-Meteo").font(.custom("Georgia-Bold", size: 27)).foregroundStyle(.white)
-                Text("The weather. Just like you remember.").font(ClassicTheme.font(12))
+                Text(L10n.text("powered by")).font(.custom("HelveticaNeue-Bold", size: 12))
+                  .foregroundStyle(
+                    .white.opacity(0.7))
+                Text(L10n.text("Open-Meteo")).font(.custom("Georgia-Bold", size: 27))
+                  .foregroundStyle(.white)
+                Text(L10n.text("The weather. Just like you remember.")).font(ClassicTheme.font(12))
                   .foregroundStyle(.white.opacity(0.55))
               }.frame(maxWidth: .infinity).padding(.vertical, 6)
-            }.accessibilityLabel("About Weather and data sources")
+            }.accessibilityLabel(L10n.text("About Weather and data sources"))
           }.padding(20).frame(maxWidth: 520)
             .frame(maxWidth: .infinity)
         }
@@ -57,7 +59,7 @@ struct CityManagerView: View {
   private var cityList: some View {
     VStack(spacing: 0) {
       if store.cities.isEmpty {
-        Button("Add your first city", action: addCity)
+        Button(L10n.text("Add your first city"), action: addCity)
           .font(.custom("HelveticaNeue-Bold", size: 18)).foregroundStyle(Color(hex: 0x324b70))
           .frame(maxWidth: .infinity).frame(height: 80).background(.white)
       } else {
@@ -80,7 +82,7 @@ struct CityManagerView: View {
                   .rotationEffect(.degrees(pendingDeletionID == city.id ? -90 : 0))
                   .shadow(color: .black.opacity(0.3), radius: 1, y: 1)
                   .frame(width: 32, height: 40)
-              }.buttonStyle(.plain).accessibilityLabel("Delete \(city.name)")
+              }.buttonStyle(.plain).accessibilityLabel(L10n.format("Delete %@", city.displayName()))
                 .accessibilityIdentifier("deleteCity_\(city.id)")
               Button {
                 store.selectedCityID = city.id
@@ -88,12 +90,13 @@ struct CityManagerView: View {
               } label: {
                 HStack(spacing: 7) {
                   if city.isLocal { Image(systemName: "location.fill").font(.system(size: 13)) }
-                  Text(city.name).font(.custom("HelveticaNeue-Bold", size: 20)).lineLimit(1)
+                  Text(city.displayName()).font(.custom("HelveticaNeue-Bold", size: 20)).lineLimit(
+                    1)
                 }.frame(maxWidth: .infinity, alignment: .leading)
               }.buttonStyle(.plain).foregroundStyle(Color(hex: 0x263d5d))
                 .accessibilityIdentifier("cityRow_\(city.id)")
               if pendingDeletionID == city.id {
-                Button("Delete") {
+                Button(L10n.text("Delete")) {
                   withAnimation(.easeInOut(duration: 0.2)) {
                     store.remove(city)
                     pendingDeletionID = nil
@@ -177,7 +180,7 @@ struct CityManagerView: View {
           } else {
             Image(systemName: "location.fill")
           }
-          Text(location.isRequesting ? "Finding your location…" : "Use Current Location")
+          Text(L10n.text(location.isRequesting ? "Finding your location…" : "Use Current Location"))
         }.font(.custom("HelveticaNeue-Bold", size: 16))
           .foregroundStyle(Color(hex: 0x324b70)).frame(maxWidth: .infinity).frame(height: 46)
           .background(
@@ -192,7 +195,7 @@ struct CityManagerView: View {
           .accessibilityIdentifier("locationError")
       }
       if location.showSettings {
-        Button("Open Settings") {
+        Button(L10n.text("Open Settings")) {
           if let url = URL(string: UIApplication.openSettingsURLString) { openURL(url) }
         }.buttonStyle(ClassicButtonStyle(blue: true)).accessibilityIdentifier("locationSettings")
       }
@@ -200,7 +203,7 @@ struct CityManagerView: View {
   }
 
   private var modePicker: some View {
-    Toggle("Demo Weather", isOn: $store.demoMode)
+    Toggle(L10n.text("Demo Weather"), isOn: $store.demoMode)
       .toggleStyle(ClassicToggleStyle())
       .accessibilityIdentifier("demoWeather")
       .padding(.horizontal, 14).padding(.vertical, 2)
@@ -247,7 +250,7 @@ struct CitySearchView: View {
         ClassicNavigationBar(
           title: "Add City", leading: { EmptyView() },
           trailing: {
-            Button("Cancel") { dismiss() }.buttonStyle(ClassicButtonStyle())
+            Button(L10n.text("Cancel")) { dismiss() }.buttonStyle(ClassicButtonStyle())
           })
         HStack(spacing: 8) {
           Button {
@@ -255,8 +258,8 @@ struct CitySearchView: View {
             Task { await search() }
           } label: {
             Image(systemName: "magnifyingglass").foregroundStyle(Color.gray)
-          }.accessibilityLabel("Search places")
-          TextField("City, district or postal code", text: $query)
+          }.accessibilityLabel(L10n.text("Search places"))
+          TextField(L10n.text("City, district or postal code"), text: $query)
             .font(.custom("HelveticaNeue", size: 17)).foregroundStyle(.black).tint(
               Color(hex: 0x326bd1)
             )
@@ -271,14 +274,14 @@ struct CitySearchView: View {
               query = ""
             } label: {
               Image(systemName: "xmark.circle.fill").foregroundStyle(.gray)
-            }.accessibilityLabel("Clear search")
+            }.accessibilityLabel(L10n.text("Clear search"))
           }
         }.padding(10).background(.white).clipShape(RoundedRectangle(cornerRadius: 9)).padding(14)
         if searching { ProgressView().tint(.white).padding(20) }
         if let error {
           VStack(spacing: 12) {
             Text(error).font(ClassicTheme.font(16)).multilineTextAlignment(.center)
-            Button("Try Again") { Task { await search() } }.buttonStyle(
+            Button(L10n.text("Try Again")) { Task { await search() } }.buttonStyle(
               ClassicButtonStyle(blue: true))
           }.padding(20)
         }
@@ -300,16 +303,18 @@ struct CitySearchView: View {
           }.clipShape(RoundedRectangle(cornerRadius: 10)).padding(.horizontal, 14)
           if !searching && error == nil && results.isEmpty {
             Text(
-              query.trimmingCharacters(in: .whitespacesAndNewlines).count < 2
-                ? "Enter a city, district or postal code."
-                : "No places found. Try adding a city or region."
+              L10n.text(
+                query.trimmingCharacters(in: .whitespacesAndNewlines).count < 2
+                  ? "Enter a city, district or postal code."
+                  : "No places found. Try adding a city or region."
+              )
             )
             .font(ClassicTheme.font(16)).foregroundStyle(.white.opacity(0.7)).padding(24)
           }
         }
         if !store.demoMode {
           Link(
-            "© OpenStreetMap contributors",
+            L10n.text("© OpenStreetMap contributors"),
             destination: URL(string: "https://www.openstreetmap.org/copyright")!
           ).font(ClassicTheme.font(11)).foregroundStyle(.white.opacity(0.65)).padding(.vertical, 8)
         }
@@ -338,7 +343,10 @@ struct CitySearchView: View {
     do {
       let found =
         store.demoMode
-        ? Self.demoCities.filter { $0.name.localizedCaseInsensitiveContains(value) }
+        ? Self.demoCities.filter { city in
+          [city.name, city.displayName(language: .chinese), city.displayName(language: .english)]
+            .contains { $0.localizedCaseInsensitiveContains(value) }
+        }.map { $0.displaying(AppLanguage.searchLanguage(for: value)) }
         : try await store.service.search(value)
       guard !Task.isCancelled, searchID == id,
         value == query.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -346,7 +354,7 @@ struct CitySearchView: View {
       results = found
     } catch {
       guard !Task.isCancelled, searchID == id else { return }
-      self.error = "Place search is unavailable. Check your connection and try again."
+      self.error = L10n.text("Place search is unavailable. Check your connection and try again.")
     }
   }
 }
@@ -361,35 +369,47 @@ struct AboutView: View {
         ClassicNavigationBar(
           title: "About Weather", leading: { EmptyView() },
           trailing: {
-            Button("Done") { dismiss() }.buttonStyle(ClassicButtonStyle(blue: true))
+            Button(L10n.text("Done")) { dismiss() }.buttonStyle(ClassicButtonStyle(blue: true))
               .accessibilityIdentifier("closeAbout")
           })
         ScrollView {
           VStack(spacing: 20) {
             WeatherArtwork(condition: .clear).frame(width: 170, height: 135)
-            Text("Weather, circa 2012.").font(ClassicTheme.font(26, bold: true))
+            Text(L10n.text("Weather, circa 2012.")).font(ClassicTheme.font(26, bold: true))
             Text(
-              "A little sunshine. A familiar blue board.\nThe classic iOS 6 weather experience, rebuilt."
+              L10n.text(
+                "A little sunshine. A familiar blue board.\nThe classic iOS 6 weather experience, rebuilt."
+              )
             )
             .font(ClassicTheme.font(18)).multilineTextAlignment(.center)
             VStack(alignment: .leading, spacing: 14) {
-              Text("Weather data").font(.custom("HelveticaNeue-Bold", size: 17))
-              Link("Open-Meteo · Forecasts", destination: URL(string: "https://open-meteo.com/")!)
-              Link("GeoNames · City search", destination: URL(string: "https://www.geonames.org/")!)
+              Text(L10n.text("Weather data")).font(.custom("HelveticaNeue-Bold", size: 17))
               Link(
-                "OpenStreetMap · ODbL",
+                L10n.text("Open-Meteo · Forecasts"),
+                destination: URL(string: "https://open-meteo.com/")!)
+              Link(
+                L10n.text("GeoNames · City search"),
+                destination: URL(string: "https://www.geonames.org/")!)
+              Link(
+                L10n.text("OpenStreetMap · ODbL"),
                 destination: URL(string: "https://www.openstreetmap.org/copyright")!)
-              Link("Photon · Geocoding", destination: URL(string: "https://photon.komoot.io/")!)
               Link(
-                "Forecast license · CC BY 4.0",
+                L10n.text("Photon · Geocoding"),
+                destination: URL(string: "https://photon.komoot.io/")!)
+              Link(
+                L10n.text("Forecast license · CC BY 4.0"),
                 destination: URL(string: "https://creativecommons.org/licenses/by/4.0/")!)
               Text(
-                "Y! recalls the original interface. Current forecasts are provided by Open-Meteo. Demo Weather uses sample forecasts and is always labeled Demo."
+                L10n.text(
+                  "Y! recalls the original interface. Current forecasts are provided by Open-Meteo. Demo Weather uses sample forecasts and is always labeled Demo."
+                )
               )
               .font(ClassicTheme.font(14)).foregroundStyle(.white.opacity(0.65))
             }.font(ClassicTheme.font(16)).padding(20).background(.black.opacity(0.2)).clipShape(
               RoundedRectangle(cornerRadius: 12))
-            Text("Swipe between cities. Scroll the hours.\nTap the update time to refresh.").font(
+            Text(
+              L10n.text("Swipe between cities. Scroll the hours.\nTap the update time to refresh.")
+            ).font(
               ClassicTheme.font(15)
             ).multilineTextAlignment(.center).foregroundStyle(.white.opacity(0.6))
           }.padding(24).frame(maxWidth: 520).frame(maxWidth: .infinity)

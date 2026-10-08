@@ -11,7 +11,7 @@ final class LocationServiceTests: XCTestCase {
     await service.request()
     XCTAssertFalse(service.isRequesting)
     XCTAssertTrue(service.showSettings)
-    XCTAssertTrue(service.message?.contains("Open Settings") == true)
+    XCTAssertTrue(service.message?.contains(L10n.text("Open Settings")) == true)
     XCTAssertEqual(manager.locationRequests, 0)
   }
 
@@ -20,12 +20,16 @@ final class LocationServiceTests: XCTestCase {
     manager.servicesEnabled = false
     let service = LocationService(manager: manager, geocoder: FakeCityGeocoder())
     await service.request()
-    XCTAssertTrue(service.message?.contains("Services are off") == true)
+    XCTAssertTrue(
+      service.message
+        == L10n.text("Location Services are off. Enable them in Settings to use local weather."))
     XCTAssertTrue(service.showSettings)
     manager.servicesEnabled = true
     manager.authorizationStatus = .restricted
     await service.request()
-    XCTAssertTrue(service.message?.contains("restricted") == true)
+    XCTAssertTrue(
+      service.message
+        == L10n.text("Location access is restricted on this device. Add a city manually."))
     XCTAssertFalse(service.showSettings)
   }
 
@@ -71,7 +75,7 @@ final class LocationServiceTests: XCTestCase {
       manager: manager, geocoder: geocoder, geocodingTimeout: .milliseconds(20))
     let delivered = expectation(description: "Coordinates remain usable")
     service.onCity = { city in
-      XCTAssertEqual(city.name, "Local Weather")
+      XCTAssertEqual(city.name, L10n.text("Local Weather"))
       XCTAssertEqual(city.latitude, 51.5085, accuracy: 0.001)
       XCTAssertTrue(city.isLocal)
       delivered.fulfill()

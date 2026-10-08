@@ -1,8 +1,14 @@
+import CoreLocation
 import Foundation
 
 protocol WeatherProviding: Sendable {
   func forecast(for city: WeatherCity) async throws -> WeatherReport
   func search(_ query: String) async throws -> [WeatherCity]
+  func localizedCity(_ city: WeatherCity) async -> WeatherCity
+}
+
+extension WeatherProviding {
+  func localizedCity(_ city: WeatherCity) async -> WeatherCity { city }
 }
 
 struct OpenMeteoService: WeatherProviding {
@@ -30,6 +36,31 @@ struct OpenMeteoService: WeatherProviding {
     try await placeSearch.search(query, session: session)
   }
 
+  func localizedCity(_ city: WeatherCity) async -> WeatherCity {
+    guard city.localizedNames?[AppLanguage.current.rawValue] == nil,
+      L10n.text(city.name, language: .chinese) == city.name
+    else { return city }
+    if city.isLocal {
+      let geocoder = await AppleCityGeocoder()
+      guard
+        let translated = try? await geocoder.city(
+          for: CLLocation(latitude: city.latitude, longitude: city.longitude))
+      else { return city }
+      var localized = city
+      localized.localizedNames = [AppLanguage.current.rawValue: translated.name]
+      localized.localizedCountries = [AppLanguage.current.rawValue: translated.country]
+      return localized
+    }
+    guard
+      let matches = try? await placeSearch.search(city.name, session: session, language: .current),
+      let match = matches.first(where: { $0.representsSamePlace(as: city) })
+    else { return city }
+    var localized = city
+    localized.localizedNames = match.localizedNames
+    localized.localizedCountries = match.localizedCountries
+    return localized
+  }
+
   private func fetch<T: Decodable>(_ url: URL) async throws -> T {
     var request = URLRequest(url: url)
     request.timeoutInterval = 20
@@ -46,8 +77,8 @@ enum WeatherServiceError: LocalizedError {
 
   var errorDescription: String? {
     switch self {
-    case .unavailable: "Weather is unavailable. Check your connection and try again."
-    case .incomplete: "The weather service returned an incomplete forecast."
+    case .unavailable: L10n.text("Weather is unavailable. Check your connection and try again.")
+    case .incomplete: L10n.text("The weather service returned an incomplete forecast.")
     }
   }
 }
@@ -139,6 +170,7 @@ struct GeocodingResponse: Decodable {
     var id: Int
     var name: String
     var country: String?
+    var countryCode: String?
     var admin1: String?
     var admin2: String?
     var admin3: String?
@@ -151,23 +183,33 @@ struct GeocodingResponse: Decodable {
     enum CodingKeys: String, CodingKey {
       case id, name, country, admin1, admin2, admin3, admin4, latitude, longitude, timezone
       case featureCode = "feature_code"
+      case countryCode = "country_code"
     }
   }
   var results: [Result]?
 
   var cities: [WeatherCity] {
+    cities(language: nil)
+  }
+
+  func cities(language: AppLanguage?) -> [WeatherCity] {
     (results ?? []).compactMap { result in
       guard result.latitude.isFinite, result.longitude.isFinite,
         (-90...90).contains(result.latitude), (-180...180).contains(result.longitude),
         result.featureCode == nil || result.featureCode?.hasPrefix("PPL") == true
           || result.featureCode?.hasPrefix("ADM") == true
       else { return nil }
+      let name =
+        language?.normalizePlaceName(result.name, countryCode: result.countryCode) ?? result.name
+      let context = PlaceQuery.context(
+        [result.admin4, result.admin3, result.admin2, result.admin1, result.country].map { part in
+          part.map { language?.normalizePlaceName($0, countryCode: result.countryCode) ?? $0 }
+        }, excluding: name)
       return WeatherCity(
-        id: String(result.id), name: result.name,
-        country: PlaceQuery.context(
-          [result.admin4, result.admin3, result.admin2, result.admin1, result.country],
-          excluding: result.name),
-        latitude: result.latitude, longitude: result.longitude, timeZone: result.timezone ?? "GMT")
+        id: String(result.id), name: name, country: context,
+        latitude: result.latitude, longitude: result.longitude, timeZone: result.timezone ?? "GMT",
+        localizedNames: language.map { [$0.rawValue: name] },
+        localizedCountries: language.map { [$0.rawValue: context] })
     }
   }
 }

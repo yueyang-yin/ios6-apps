@@ -7,7 +7,7 @@ final class WeatherSixUITests: XCTestCase {
     continueAfterFailure = false
     let app = XCUIApplication()
     app.launchArguments = ["--uitesting", "--demo"]
-    app.launch()
+    launchApp(app)
     XCTAssertTrue(app.staticTexts["cityName_cupertino"].waitForExistence(timeout: 10))
     XCTAssertEqual(app.staticTexts["cityName_cupertino"].label, "Cupertino")
     XCTAssertEqual(app.staticTexts["currentTemperature_cupertino"].label, "23 degrees celsius")
@@ -64,7 +64,7 @@ final class WeatherSixUITests: XCTestCase {
     continueAfterFailure = false
     let app = XCUIApplication()
     app.launchArguments = ["--uitesting", "--demo"]
-    app.launch()
+    launchApp(app)
     XCTAssertTrue(app.staticTexts["cityName_cupertino"].waitForExistence(timeout: 10))
     if app.frame.height < 700 {
       XCTAssertTrue(app.buttons["hourlyToggle"].exists)
@@ -85,7 +85,7 @@ final class WeatherSixUITests: XCTestCase {
     continueAfterFailure = false
     let app = XCUIApplication()
     app.launchArguments = ["--uitesting", "--demo", "--animate-flips"]
-    app.launch()
+    launchApp(app)
     XCTAssertTrue(app.buttons["manageCities_cupertino"].waitForExistence(timeout: 10))
     app.buttons["manageCities_cupertino"].tap()
     let add = app.buttons["addCity"]
@@ -129,7 +129,7 @@ final class WeatherSixUITests: XCTestCase {
   @MainActor
   private func verifyHeroLayout(
     condition: String, night: Bool = false, temperature: String = "23", fahrenheit: Bool = false,
-    expected: String = "23 degrees celsius"
+    expected: String = "23 degrees celsius", language: String = "en"
   ) {
     let app = XCUIApplication()
     app.launchArguments =
@@ -137,7 +137,7 @@ final class WeatherSixUITests: XCTestCase {
         "--uitesting", "--demo", "--fixture-condition", condition, "--fixture-temperature",
         temperature,
       ] + (night ? ["--fixture-night"] : [])
-    app.launch()
+    launchApp(app, language: language)
     let value = app.staticTexts["currentTemperature_cupertino"]
     XCTAssertTrue(value.waitForExistence(timeout: 10))
     if fahrenheit {
@@ -154,7 +154,9 @@ final class WeatherSixUITests: XCTestCase {
     XCTAssertFalse(artwork.frame.intersects(value.frame))
     XCTAssertFalse(artwork.frame.intersects(app.staticTexts["cityName_cupertino"].frame))
     XCTAssertTrue(app.buttons["manageCities_cupertino"].isHittable)
-    XCTAssertTrue(app.buttons["Weather sources and app information"].isHittable)
+    XCTAssertTrue(
+      app.buttons[language == "en" ? "Weather sources and app information" : "天气数据来源与 App 信息"]
+        .isHittable)
     XCTAssertTrue(app.frame.contains(value.frame))
     XCTAssertTrue(app.frame.contains(artwork.frame))
     attachScreenshot("Hero-\(condition)-\(night ? "Night" : "Day")-\(temperature)")
@@ -169,7 +171,7 @@ final class WeatherSixUITests: XCTestCase {
     continueAfterFailure = false
     let app = XCUIApplication()
     app.launchArguments = ["--uitesting"]
-    app.launch()
+    launchApp(app)
     let manage = app.buttons["manageCities_cupertino"]
     XCTAssertTrue(manage.waitForExistence(timeout: 10))
     manage.tap()
@@ -204,7 +206,7 @@ final class WeatherSixUITests: XCTestCase {
     continueAfterFailure = false
     let app = XCUIApplication()
     app.launchArguments = ["--uitesting"]
-    app.launch()
+    launchApp(app)
     let temperature = app.staticTexts["currentTemperature_cupertino"]
     XCTAssertTrue(temperature.waitForExistence(timeout: 10))
     let forecast = XCTNSPredicateExpectation(
@@ -247,7 +249,7 @@ final class WeatherSixUITests: XCTestCase {
     let app = XCUIApplication()
     app.launchArguments = ["--uitesting", "--demo"]
     app.resetAuthorizationStatus(for: .location)
-    app.launch()
+    launchApp(app)
     XCTAssertTrue(app.buttons["manageCities_cupertino"].waitForExistence(timeout: 10))
     app.buttons["manageCities_cupertino"].tap()
     app.buttons["currentLocation"].tap()
@@ -269,7 +271,7 @@ final class WeatherSixUITests: XCTestCase {
     XCTAssertTrue(settings.wait(for: .runningForeground, timeout: 5))
 
     app.resetAuthorizationStatus(for: .location)
-    app.launch()
+    launchApp(app)
     XCTAssertTrue(app.buttons["manageCities_cupertino"].waitForExistence(timeout: 10))
     app.buttons["manageCities_cupertino"].tap()
     app.buttons["currentLocation"].tap()
@@ -296,6 +298,96 @@ final class WeatherSixUITests: XCTestCase {
     XCTAssertEqual(XCTWaiter.wait(for: [loaded], timeout: 25), .completed)
     XCTAssertFalse(app.buttons["refreshWeather"].label.contains("Demo"))
     attachScreenshot("08-Local-Weather")
+  }
+
+  @MainActor
+  private func launchApp(_ app: XCUIApplication, language: String = "en") {
+    app.launchArguments += [
+      "-AppleLanguages", "(\(language))", "-AppleLocale", language == "en" ? "en_US" : "zh_CN",
+    ]
+    app.launch()
+  }
+
+  @MainActor
+  func testChineseInterfaceAndBothSearchLanguages() {
+    continueAfterFailure = false
+    let app = XCUIApplication()
+    app.launchArguments = ["--uitesting", "--demo"]
+    launchApp(app, language: "zh-Hans")
+    XCTAssertTrue(app.staticTexts["cityName_cupertino"].waitForExistence(timeout: 10))
+    XCTAssertEqual(app.staticTexts["cityName_cupertino"].label, "库比蒂诺")
+    XCTAssertEqual(app.staticTexts["currentTemperature_cupertino"].label, "23 摄氏度")
+    XCTAssertTrue(app.staticTexts["高：25"].exists)
+    XCTAssertTrue(
+      app.staticTexts.matching(NSPredicate(format: "label CONTAINS '星期'")).firstMatch.exists)
+    attachScreenshot("Chinese-01-Forecast")
+    app.buttons["manageCities_cupertino"].tap()
+    XCTAssertTrue(app.buttons["currentLocation"].waitForExistence(timeout: 5))
+    XCTAssertEqual(app.buttons["currentLocation"].label, "使用当前位置")
+    XCTAssertEqual(app.switches["demoWeather"].label, "演示天气")
+    attachScreenshot("Chinese-02-Manager")
+    app.buttons["关于天气与数据来源"].tap()
+    XCTAssertTrue(app.staticTexts["天气，重回 2012。"].waitForExistence(timeout: 5))
+    attachScreenshot("Chinese-03-About")
+    app.buttons["closeAbout"].tap()
+    app.buttons["addCity"].tap()
+    let search = app.textFields["citySearch"]
+    XCTAssertTrue(search.waitForExistence(timeout: 5))
+    XCTAssertEqual(search.placeholderValue, "城市、区县或邮政编码")
+    search.tap()
+    search.typeText("Tokyo")
+    let tokyo = app.buttons["searchResult_tokyo"]
+    XCTAssertTrue(tokyo.waitForExistence(timeout: 5))
+    XCTAssertTrue(tokyo.label.contains("Tokyo"))
+    XCTAssertTrue(tokyo.label.contains("Japan"))
+    attachScreenshot("Chinese-04-English-Search")
+    app.buttons["清除搜索"].tap()
+    search.tap()
+    search.typeText("东京")
+    XCTAssertTrue(tokyo.waitForExistence(timeout: 5))
+    XCTAssertTrue(tokyo.label.contains("东京"))
+    XCTAssertTrue(tokyo.label.contains("日本"))
+    attachScreenshot("Chinese-05-Chinese-Search")
+    tokyo.tap()
+    app.buttons["doneManaging"].tap()
+    XCTAssertEqual(app.staticTexts["cityName_tokyo"].label, "东京")
+  }
+
+  @MainActor
+  func testChineseHeaderKeepsNegativeAndThreeDigitTemperaturesClear() {
+    continueAfterFailure = false
+    verifyHeroLayout(
+      condition: "cloudy", temperature: "-42", expected: "-42 摄氏度", language: "zh-Hans")
+    verifyHeroLayout(
+      condition: "thunderstorm", temperature: "48", fahrenheit: true,
+      expected: "118 华氏度", language: "zh-Hans")
+  }
+
+  @MainActor
+  func testEnglishInterfaceAcceptsChineseSearchAndKeepsEnglishCityLabel() {
+    continueAfterFailure = false
+    let app = XCUIApplication()
+    app.launchArguments = ["--uitesting", "--demo"]
+    launchApp(app)
+    XCTAssertTrue(app.staticTexts["cityName_cupertino"].waitForExistence(timeout: 10))
+    XCTAssertEqual(app.staticTexts["cityName_cupertino"].label, "Cupertino")
+    app.buttons["manageCities_cupertino"].tap()
+    XCTAssertEqual(app.buttons["currentLocation"].label, "Use Current Location")
+    app.buttons["addCity"].tap()
+    let search = app.textFields["citySearch"]
+    XCTAssertTrue(search.waitForExistence(timeout: 5))
+    search.tap()
+    search.typeText("东京")
+    let tokyo = app.buttons["searchResult_tokyo"]
+    XCTAssertTrue(tokyo.waitForExistence(timeout: 5))
+    XCTAssertTrue(tokyo.label.contains("东京"))
+    XCTAssertTrue(tokyo.label.contains("日本"))
+    attachScreenshot("English-01-Chinese-Search")
+    tokyo.tap()
+    app.buttons["doneManaging"].tap()
+    XCTAssertEqual(app.staticTexts["cityName_tokyo"].label, "Tokyo")
+    XCTAssertTrue(app.staticTexts["currentTemperature_tokyo"].label.contains("degrees celsius"))
+    attachScreenshot("English-02-Forecast")
   }
 
   @MainActor

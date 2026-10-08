@@ -1,0 +1,2 @@
+"CFBundleDisplayName" = "Weather";
+"NSLocationWhenInUseUsageDescription" = "Weather uses your location to show your local forecast when you choose Use Current Location.";

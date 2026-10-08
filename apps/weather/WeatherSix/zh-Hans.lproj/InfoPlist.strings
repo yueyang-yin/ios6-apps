@@ -1,0 +1,2 @@
+"CFBundleDisplayName" = "天气";
+"NSLocationWhenInUseUsageDescription" = "当你选择“使用当前位置”时，天气会访问你的位置，以显示当地天气预报。";

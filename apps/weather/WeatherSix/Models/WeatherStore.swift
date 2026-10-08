@@ -87,7 +87,11 @@ final class WeatherStore {
     }
     do {
       let report = try await service.forecast(for: city)
-      guard !Task.isCancelled, refreshIDs[city.id] == requestID, cities.contains(city) else {
+      guard !Task.isCancelled, refreshIDs[city.id] == requestID,
+        cities.contains(where: {
+          $0.id == city.id && $0.latitude == city.latitude && $0.longitude == city.longitude
+        })
+      else {
         return
       }
       reports[city.id] = report
@@ -101,13 +105,35 @@ final class WeatherStore {
     }
   }
 
+  func localizeCity(_ city: WeatherCity) async {
+    let localized = await service.localizedCity(city)
+    guard !Task.isCancelled,
+      let index = cities.firstIndex(where: {
+        $0.id == city.id && $0.latitude == city.latitude && $0.longitude == city.longitude
+      }), localized.localizedNames != nil
+    else { return }
+    cities[index].localizedNames = (cities[index].localizedNames ?? [:]).merging(
+      localized.localizedNames ?? [:]
+    ) { _, new in new }
+    cities[index].localizedCountries = (cities[index].localizedCountries ?? [:]).merging(
+      localized.localizedCountries ?? [:]
+    ) { _, new in new }
+    save()
+  }
+
   func add(_ city: WeatherCity) {
-    if let index = cities.firstIndex(where: {
-      $0.id == city.id
-        || ($0.name.localizedCaseInsensitiveCompare(city.name) == .orderedSame
-          && abs($0.latitude - city.latitude) < 0.02 && abs($0.longitude - city.longitude) < 0.02)
-    }) {
+    if let index = cities.firstIndex(where: { $0.representsSamePlace(as: city) }) {
       cities[index].country = city.country
+      if let names = city.localizedNames {
+        cities[index].localizedNames = (cities[index].localizedNames ?? [:]).merging(names) {
+          _, new in new
+        }
+      }
+      if let countries = city.localizedCountries {
+        cities[index].localizedCountries = (cities[index].localizedCountries ?? [:]).merging(
+          countries
+        ) { _, new in new }
+      }
       if city.timeZone != "GMT" { cities[index].timeZone = city.timeZone }
       selectedCityID = cities[index].id
       save()

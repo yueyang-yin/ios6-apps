@@ -8,6 +8,39 @@ struct WeatherCity: Codable, Identifiable, Hashable, Sendable {
   var longitude: Double
   var timeZone: String
   var isLocal = false
+  var localizedNames: [String: String]?
+  var localizedCountries: [String: String]?
+
+  func displayName(language: AppLanguage = .current) -> String {
+    localizedNames?[language.rawValue] ?? L10n.text(name, language: language)
+  }
+
+  func displayCountry(language: AppLanguage = .current) -> String {
+    localizedCountries?[language.rawValue] ?? L10n.text(country, language: language)
+  }
+
+  func displaying(_ language: AppLanguage) -> Self {
+    var city = self
+    city.localizedNames = Dictionary(
+      uniqueKeysWithValues: AppLanguage.allCases.map { ($0.rawValue, displayName(language: $0)) })
+    city.localizedCountries = Dictionary(
+      uniqueKeysWithValues: AppLanguage.allCases.map { ($0.rawValue, displayCountry(language: $0)) }
+    )
+    city.name = displayName(language: language)
+    city.country = displayCountry(language: language)
+    return city
+  }
+
+  func representsSamePlace(as other: Self) -> Bool {
+    if id == other.id { return true }
+    guard abs(latitude - other.latitude) < 0.02, abs(longitude - other.longitude) < 0.02 else {
+      return false
+    }
+    let names = Set(([name] + Array((localizedNames ?? [:]).values)).map { $0.lowercased() })
+    return ([other.name] + Array((other.localizedNames ?? [:]).values)).contains {
+      names.contains($0.lowercased())
+    }
+  }
 
   static let defaults: [WeatherCity] = [
     .init(
@@ -51,13 +84,13 @@ enum WeatherCondition: String, Codable, CaseIterable, Sendable {
 
   var description: String {
     switch self {
-    case .clear: "Clear"
-    case .partlyCloudy: "Partly cloudy"
-    case .cloudy: "Cloudy"
-    case .fog: "Fog"
-    case .rain: "Rain"
-    case .snow: "Snow"
-    case .thunderstorm: "Thunderstorms"
+    case .clear: L10n.text("Clear")
+    case .partlyCloudy: L10n.text("Partly cloudy")
+    case .cloudy: L10n.text("Cloudy")
+    case .fog: L10n.text("Fog")
+    case .rain: L10n.text("Rain")
+    case .snow: L10n.text("Snow")
+    case .thunderstorm: L10n.text("Thunderstorms")
     }
   }
 }
@@ -122,11 +155,22 @@ struct WeatherReport: Codable, Sendable {
 }
 
 enum WeatherDate {
-  static func string(_ date: Date, format: String, timeZone: String) -> String {
+  static func string(
+    _ date: Date, format: String, timeZone: String, language: AppLanguage = .current
+  ) -> String {
     let formatter = DateFormatter()
-    formatter.locale = Locale(identifier: "en_US_POSIX")
+    formatter.locale = language.locale
     formatter.timeZone = TimeZone(identifier: timeZone) ?? .gmt
-    formatter.dateFormat = format
+    if language == .chinese {
+      switch format {
+      case "ha": formatter.dateFormat = "H时"
+      case "h:mm a": formatter.dateFormat = "HH:mm"
+      case "M/d/yy  h:mm a": formatter.dateFormat = "yyyy/M/d HH:mm"
+      default: formatter.dateFormat = format
+      }
+    } else {
+      formatter.dateFormat = format
+    }
     return formatter.string(from: date)
   }
 }

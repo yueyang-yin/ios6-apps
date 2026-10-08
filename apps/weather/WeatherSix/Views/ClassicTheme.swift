@@ -109,10 +109,10 @@ struct ClassicToggleStyle: ToggleStyle {
                 .init(color: Color(hex: 0xf8f8f8), location: 1),
               ], startPoint: .top, endPoint: .bottom))
       HStack(spacing: 0) {
-        Text("ON").foregroundStyle(.white)
+        Text(L10n.text("ON")).foregroundStyle(.white)
           .shadow(color: .black.opacity(0.4), radius: 0, y: -1)
           .frame(width: 40)
-        Text("OFF").foregroundStyle(Color(hex: 0x777777))
+        Text(L10n.text("OFF")).foregroundStyle(Color(hex: 0x777777))
           .shadow(color: .white, radius: 0, y: 1)
           .frame(width: 40)
       }
@@ -151,7 +151,8 @@ struct ClassicNavigationBar<Leading: View, Trailing: View>: View {
           .init(color: Color(hex: 0x17181d), location: 0.5),
           .init(color: Color(hex: 0x24252b), location: 1),
         ], startPoint: .top, endPoint: .bottom)
-      Text(title).font(ClassicTheme.font(24, bold: true)).shadow(color: .black, radius: 1, y: -1)
+      Text(L10n.text(title)).font(ClassicTheme.font(24, bold: true)).shadow(
+        color: .black, radius: 1, y: -1)
       HStack {
         leading()
         Spacer()

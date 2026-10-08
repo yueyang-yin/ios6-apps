@@ -12,6 +12,8 @@ Open `iOS6Apps.xcworkspace` at the collection root and select the app's scheme. 
 
 Weather defaults to Celsius, and its app icon displays `23°`. Use Current Location requests foreground location access and loads live weather. If access was denied, Open Settings provides a recovery path. Set a simulated location using Simulator → Features → Location when running on Simulator.
 
+The weather interface follows the iPhone's system or app language in English or Chinese (Simplified). Search results follow the query language independently, and saved cities preserve available names in both languages.
+
 ## Layout
 
 ```text

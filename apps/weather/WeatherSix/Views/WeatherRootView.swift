@@ -37,7 +37,11 @@ struct WeatherRootView: View {
       }
     }
     .task(id: store.selectedCityID + String(store.demoMode)) {
-      if let city = store.selectedCity { await store.refresh(city) }
+      if let city = store.selectedCity {
+        async let labels: Void = store.localizeCity(city)
+        async let forecast: Void = store.refresh(city)
+        _ = await (labels, forecast)
+      }
     }
     .onChange(of: scenePhase) { _, phase in
       if phase == .active, let city = store.selectedCity { Task { await store.refresh(city) } }
@@ -49,9 +53,9 @@ struct WeatherRootView: View {
     if store.cities.isEmpty {
       VStack(spacing: 22) {
         WeatherArtwork(condition: .clear).frame(width: 160)
-        Text("Weather").font(ClassicTheme.font(30, bold: true))
-        Text("Add a city to see its forecast.").font(ClassicTheme.font(18))
-        Button("Add a City") { flip(true) }.buttonStyle(ClassicButtonStyle(blue: true))
+        Text(L10n.text("Weather")).font(ClassicTheme.font(30, bold: true))
+        Text(L10n.text("Add a city to see its forecast.")).font(ClassicTheme.font(18))
+        Button(L10n.text("Add a City")) { flip(true) }.buttonStyle(ClassicButtonStyle(blue: true))
       }
     } else {
       VStack(spacing: 12) {
@@ -83,7 +87,7 @@ struct WeatherRootView: View {
             }
             .foregroundStyle(store.selectedCityID == city.id ? .white : .white.opacity(0.35))
             .frame(minWidth: 24, minHeight: 30)
-            .accessibilityLabel("Show \(city.name)")
+            .accessibilityLabel(L10n.format("Show %@", city.displayName()))
             .accessibilityAddTraits(store.selectedCityID == city.id ? .isSelected : [])
           }
         }

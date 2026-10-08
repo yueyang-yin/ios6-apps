@@ -192,18 +192,19 @@ final class LocationService: NSObject, @preconcurrency CLLocationManagerDelegate
 
   private func fail(_ text: String, settings: Bool = false) {
     cancel()
-    message = text
+    message = L10n.text(text)
     showSettings = settings
   }
 }
 
 extension WeatherCity {
   static func local(
-    at location: CLLocation, name: String = "Local Weather", country: String = "Current location",
+    at location: CLLocation, name: String? = nil, country: String? = nil,
     timeZone: String = TimeZone.current.identifier
   ) -> WeatherCity {
     WeatherCity(
-      id: "local", name: name, country: country, latitude: location.coordinate.latitude,
+      id: "local", name: name ?? L10n.text("Local Weather"),
+      country: country ?? L10n.text("Current location"), latitude: location.coordinate.latitude,
       longitude: location.coordinate.longitude, timeZone: timeZone, isLocal: true)
   }
 }
