@@ -20,6 +20,8 @@ Final result bundles:
 
 Strict Swift formatting passed for all Notes app and test source files. Inspected English, Chinese, and Chinese landscape captures are stored in `screenshots/full-screen-settings/iphone-air/` and `screenshots/full-screen-settings/iphone-se/`. The final development device build also passed signature verification and was updated in place on the iPhone Air, preserving the normal app's data container.
 
+The updated normal app launched on **iOS 27.0.1** without test/demo arguments or an attached debugger. An independent `devicectl` query confirmed PID **9115**. The additional two-test physical-device settings run compiled successfully but never began executing tests: Xcode's destination preflight required the phone to be unlocked. That waiting run was canceled after the device remained locked; it is not counted as passed, failed, or skipped test coverage. Physical settings interaction and rotation therefore remain unverified. Xcode's main process was confirmed absent, and no waiting device-test process was left running.
+
 ## Physical-device installation
 
 On **2026-10-09**, Notes Six **1.0 (1)** was built for and installed on the connected **iPhone Air running iOS 27.0.1**. The Debug device build used automatic signing with the existing development team supplied as an `xcodebuild` override; personal signing settings were not added to the Notes project. Strict code-signature verification passed, and the embedded provisioning profile includes the target device. The profile expires on **2026-10-16 at 14:22:34 UTC**; another signed installation is required to continue using this development build after expiration.
