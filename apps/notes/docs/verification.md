@@ -2,6 +2,24 @@
 
 Verified on **2026-10-09** using XcodeBuildMCP, XCTest, strict Swift formatting, and the live serve-sim browser mirror.
 
+## Full-screen settings follow-up
+
+The Accounts settings button now opens an app-owned full-screen page with a horizontal transition. The system page sheet has been removed. Settings shares the notebook's safe-area-aware layout: its leather navigation panel stays at the same height as Accounts, while pinstripes continue behind the real status bar and bottom safe area. There are no extra card corners or white bottom strip. Done and the accessibility escape action return to Accounts, and the transition honors Reduce Motion.
+
+Account controls leave the view and accessibility hierarchies while Settings is active. Explicit accessibility containers preserve each button's identity. Tests compare Settings and Accounts bounds and navigation positions, verify hidden account controls, repeat opening/closing, swipe down without dismissal, rotate to landscape, check visible control bounds, and confirm font persistence and unchanged note text after relaunch. Existing share/Copy, classic print error/cancellation, landscape editing, and page-navigation/crumpling tests cover the changed root composition. All test flows use the isolated UI-test notebook.
+
+| Scope | Device / runtime | Result |
+| --- | --- | --- |
+| Two new settings UI tests and four affected UI regressions | Air / iOS 26.2 | 6 passed, 0 failed, 0 skipped |
+| Same settings and affected UI regressions | SE / iOS 17.5 | 6 passed, 0 failed, 0 skipped |
+
+Final result bundles:
+
+- Air: `test_sim_2026-10-09T14-56-48-168Z_pid72710_bc805b59.xcresult`.
+- SE: `test_sim_2026-10-09T14-59-07-395Z_pid72710_2040184d.xcresult`.
+
+Strict Swift formatting passed for all Notes app and test source files. Inspected English, Chinese, and Chinese landscape captures are stored in `screenshots/full-screen-settings/iphone-air/` and `screenshots/full-screen-settings/iphone-se/`. The final development device build also passed signature verification and was updated in place on the iPhone Air, preserving the normal app's data container.
+
 ## Physical-device installation
 
 On **2026-10-09**, Notes Six **1.0 (1)** was built for and installed on the connected **iPhone Air running iOS 27.0.1**. The Debug device build used automatic signing with the existing development team supplied as an `xcodebuild` override; personal signing settings were not added to the Notes project. Strict code-signature verification passed, and the embedded provisioning profile includes the target device. The profile expires on **2026-10-16 at 14:22:34 UTC**; another signed installation is required to continue using this development build after expiration.

@@ -149,6 +149,98 @@ final class NotesSixUITests: XCTestCase {
     app.buttons["done-editing"].tap()
   }
 
+  private func assertSettingsFillsAccounts(_ frame: CGRect, navigationY: CGFloat) {
+    let close = app.buttons["close-settings"]
+    XCTAssertTrue(close.waitForExistence(timeout: 3))
+    waitUntilHittable(close)
+    let settings = app.otherElements["notes-settings-screen"]
+    XCTAssertTrue(settings.exists)
+    XCTAssertEqual(settings.frame.minX, frame.minX, accuracy: 1)
+    XCTAssertEqual(settings.frame.minY, frame.minY, accuracy: 1)
+    XCTAssertEqual(settings.frame.width, frame.width, accuracy: 1)
+    XCTAssertEqual(settings.frame.height, frame.height, accuracy: 1)
+    XCTAssertEqual(close.frame.minY, navigationY, accuracy: 1)
+    XCTAssertFalse(app.buttons["local-account"].exists)
+    XCTAssertFalse(app.buttons["notes-settings"].exists)
+  }
+
+  func testFullScreenSettingsReturnAndFontPersistence() {
+    launch()
+    app.buttons["accounts"].tap()
+    let settingsButton = app.buttons["notes-settings"]
+    waitUntilHittable(settingsButton)
+    let frame = app.otherElements["notes-accounts-screen"].frame
+    let navigationY = settingsButton.frame.minY
+    settingsButton.tap()
+    assertSettingsFillsAccounts(frame, navigationY: navigationY)
+    XCTAssertEqual(app.buttons["close-settings"].label, "Done")
+    app.buttons["font-Marker Felt"].tap()
+    XCTAssertTrue(app.buttons["font-Marker Felt"].isSelected)
+    capture("en-settings-full-screen")
+    app.buttons["close-settings"].tap()
+    XCTAssertTrue(app.buttons["close-settings"].waitForNonExistence(timeout: 3))
+    waitUntilHittable(settingsButton)
+    settingsButton.tap()
+    assertSettingsFillsAccounts(frame, navigationY: navigationY)
+    XCTAssertTrue(app.buttons["font-Marker Felt"].isSelected)
+    app.buttons["close-settings"].tap()
+    app.buttons["local-account"].tap()
+    openWelcome()
+    let originalText = app.textViews["note-editor"].value as? String
+    app.terminate()
+    launch(reset: false)
+    app.buttons["accounts"].tap()
+    app.buttons["notes-settings"].tap()
+    XCTAssertTrue(app.buttons["font-Marker Felt"].waitForExistence(timeout: 3))
+    XCTAssertTrue(app.buttons["font-Marker Felt"].isSelected)
+    app.buttons["close-settings"].tap()
+    app.buttons["local-account"].tap()
+    openWelcome()
+    XCTAssertEqual(app.textViews["note-editor"].value as? String, originalText)
+  }
+
+  func testChineseFullScreenSettingsRotationAndSwipe() {
+    launch(language: "zh-Hans")
+    app.buttons["accounts"].tap()
+    waitUntilHittable(app.buttons["notes-settings"])
+    let portrait = app.otherElements["notes-accounts-screen"].frame
+    let navigationY = app.buttons["notes-settings"].frame.minY
+    app.buttons["notes-settings"].tap()
+    assertSettingsFillsAccounts(portrait, navigationY: navigationY)
+    XCTAssertEqual(app.buttons["close-settings"].label, "完成")
+    XCTAssertTrue(app.staticTexts["字体"].exists)
+    capture("zh-settings-full-screen")
+    app.scrollViews.firstMatch.swipeDown()
+    XCTAssertTrue(app.buttons["close-settings"].exists)
+    app.buttons["close-settings"].tap()
+    XCUIDevice.shared.orientation = .landscapeLeft
+    defer { XCUIDevice.shared.orientation = .portrait }
+    let wide = NSPredicate { _, _ in
+      self.app.windows.firstMatch.frame.width > self.app.windows.firstMatch.frame.height
+    }
+    XCTAssertEqual(
+      XCTWaiter.wait(for: [XCTNSPredicateExpectation(predicate: wide, object: nil)], timeout: 5),
+      .completed)
+    waitUntilHittable(app.buttons["notes-settings"])
+    let landscape = app.otherElements["notes-accounts-screen"].frame
+    let landscapeNavigationY = app.buttons["notes-settings"].frame.minY
+    app.buttons["notes-settings"].tap()
+    assertSettingsFillsAccounts(landscape, navigationY: landscapeNavigationY)
+    let window = app.windows.firstMatch.frame
+    for identifier in ["close-settings", "font-Noteworthy", "font-Helvetica", "font-Marker Felt"] {
+      XCTAssertTrue(app.buttons[identifier].isHittable, identifier)
+      XCTAssertTrue(window.contains(app.buttons[identifier].frame), identifier)
+    }
+    app.buttons["font-Helvetica"].tap()
+    capture("zh-settings-full-screen-landscape")
+    app.buttons["close-settings"].tap()
+    XCTAssertTrue(app.buttons["close-settings"].waitForNonExistence(timeout: 3))
+    waitUntilHittable(app.buttons["notes-settings"])
+    app.buttons["local-account"].tap()
+    openWelcome(chinese: true)
+    XCTAssertTrue((app.textViews["note-editor"].value as? String)?.contains("给你的想法") == true)
+  }
+
   func testChineseShareMailUnavailableAndBackdropCancel() {
     launch(language: "zh-Hans")
     openWelcome(chinese: true)

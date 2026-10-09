@@ -32,6 +32,8 @@ struct AccountsView: View {
       }
       .background(PinstripeBackground())
     }
+    .accessibilityElement(children: .contain)
+    .accessibilityIdentifier("notes-accounts-screen")
   }
 
   private func accountRow(_ name: String, identifier: String) -> some View {
@@ -74,14 +76,14 @@ struct PinstripeBackground: View {
 
 struct NotesSettingsView: View {
   let store: NotesStore
-  @Environment(\.dismiss) private var dismiss
+  let close: () -> Void
 
   var body: some View {
     VStack(spacing: 0) {
       ClassicNavigationBar(title: L10n.text("Settings")) {
         EmptyView()
       } trailing: {
-        Button(L10n.text("Done")) { dismiss() }
+        Button(L10n.text("Done"), action: close)
           .buttonStyle(LeatherButtonStyle())
           .accessibilityIdentifier("close-settings")
       }
@@ -135,6 +137,9 @@ struct NotesSettingsView: View {
       .background(PinstripeBackground())
     }
     .preferredColorScheme(.light)
+    .accessibilityElement(children: .contain)
+    .accessibilityIdentifier("notes-settings-screen")
+    .accessibilityAction(.escape, close)
   }
 
   private func info(_ heading: String, _ description: String) -> some View {

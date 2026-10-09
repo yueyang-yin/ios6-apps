@@ -8,7 +8,7 @@ struct NotesRootView: View {
   @State private var editing = false
   @State private var pageForward = true
   @State private var pendingDelete: UUID?
-  @State private var sheet: NotesSheet?
+  @State private var showingSettings = false
   @State private var shareNote: Note?
   @State private var finishingShare = false
   @State private var exportRequest: NoteExportRequest?
@@ -22,21 +22,34 @@ struct NotesRootView: View {
 
   var body: some View {
     GeometryReader { geometry in
-      VStack(spacing: 0) {
-        if let id = selectedID, let note = store.note(id) {
-          detail(note)
-        } else if showingAccounts {
-          AccountsView(
-            count: store.notes.count, select: { navigate { showingAccounts = false } },
-            back: { navigate { showingAccounts = false } },
-            settings: { sheet = .settings })
-        } else {
-          NotesListView(
-            store: store, open: { id in navigate { selectedID = id } }, create: create,
-            accounts: { navigate { showingAccounts = true } }, delete: requestDelete)
+      ZStack {
+        if !showingSettings {
+          VStack(spacing: 0) {
+            if let id = selectedID, let note = store.note(id) {
+              detail(note)
+            } else if showingAccounts {
+              AccountsView(
+                count: store.notes.count, select: { navigate { showingAccounts = false } },
+                back: { navigate { showingAccounts = false } },
+                settings: { navigate { showingSettings = true } })
+            } else {
+              NotesListView(
+                store: store, open: { id in navigate { selectedID = id } }, create: create,
+                accounts: { navigate { showingAccounts = true } }, delete: requestDelete)
+            }
+          }
+          .transition(.move(edge: .leading))
+          .zIndex(0)
+        }
+
+        if showingSettings {
+          NotesSettingsView(store: store) { navigate { showingSettings = false } }
+            .transition(.move(edge: .trailing))
+            .zIndex(1)
         }
       }
       .frame(height: geometry.size.height)
+      .clipped()
       .background {
         Group {
           if showingAccounts {
@@ -102,11 +115,6 @@ struct NotesRootView: View {
           }, completion: finishDeletion
         )
         .id(request.id)
-      }
-    }
-    .sheet(item: $sheet) { destination in
-      switch destination {
-      case .settings: NotesSettingsView(store: store)
       }
     }
     .fullScreenCover(item: $printNote) { note in
@@ -256,16 +264,6 @@ struct NotesRootView: View {
 
   private func navigate(_ action: () -> Void) {
     withAnimation(reduceMotion ? nil : .easeInOut(duration: 0.2), action)
-  }
-}
-
-private enum NotesSheet: Identifiable {
-  case settings
-
-  var id: String {
-    switch self {
-    case .settings: "settings"
-    }
   }
 }
 
