@@ -2,4 +2,6 @@
 <Workspace version="1.0">
    <FileRef location="group:apps/weather/WeatherSix.xcodeproj">
    </FileRef>
+   <FileRef location="group:apps/notes/NotesSix.xcodeproj">
+   </FileRef>
 </Workspace>

@@ -13,11 +13,14 @@
 
 ## 新增项目
 
+实现界面前先读取 [共同设计语言](design-language.md)，按各页面的历史参考与实际结构选择适用模式。备忘录及适用的详情、管理、设置页可沿用主体背景延伸至状态栏、导航栏独立等规则；Weather 看天气等具有专用结构的主界面保留原版布局，不硬套共同框架。始终考虑安全区与中英文适配。
+
 1. 创建 `apps/<app-name>/`，例如 `apps/notes/`。
 2. 在该目录创建原生 Xcode 项目，并启用共享 scheme。
 3. 把项目加入根 `iOS6Apps.xcworkspace`；引用路径使用 `group:apps/<app-name>/<project>.xcodeproj`。
 4. 更新根 README 的 App 表格。
 5. 在该 App 目录内完成构建、实际界面验证和必要测试。
+6. 在该 App 的英文 README 中链接共同设计语言，并在 `docs/verification.md` 记录适用的视觉与交互验证。
 
 当前天气 App 的逻辑和拟物控件仍在 `apps/weather/`。后续出现真实共用需求时，再提取共享 Swift Package，避免让尚未创建的 App 影响现有项目。
 

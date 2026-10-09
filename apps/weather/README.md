@@ -2,6 +2,8 @@
 
 A native SwiftUI weather app in the iOS 6 Apps collection, recreating the skeuomorphic appearance of iOS 6 Weather. Requires **iOS 17 or later** and has no third-party Swift package dependencies.
 
+Use matching patterns from the collection's [shared design language](../../docs/design-language.md) on applicable detail, management, or settings screens. Weather's city-management screen supplies the dark linen, independent glossy navigation, and classic control references. The main forecast keeps its original glass, weather artwork, and paging layout; it does not use the Notes/settings frame.
+
 ## Run
 
 1. Open the collection's `iOS6Apps.xcworkspace` in Xcode, or open `WeatherSix.xcodeproj` in this directory.

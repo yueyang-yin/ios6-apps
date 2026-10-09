@@ -1,0 +1,398 @@
+// !$*UTF8*$!
+{
+archiveVersion = "1";
+classes = {
+
+};
+objectVersion = "77";
+objects = {
+7B3922E2248CA7B20844DFD6 = {
+isa = "PBXFileSystemSynchronizedRootGroup";
+path = "NotesSix";
+sourceTree = "<group>";
+exceptions = ("5B580BF1688FE09CDCC4348F");
+};
+5B580BF1688FE09CDCC4348F = {
+isa = "PBXFileSystemSynchronizedBuildFileExceptionSet";
+membershipExceptions = ("Info.plist");
+target = "F6FFA5DDBC2029800ED0C3D3";
+};
+0189DD5ABFD1A54D55D55429 = {
+isa = "PBXFileReference";
+explicitFileType = "wrapper.application";
+path = "NotesSix.app";
+sourceTree = "BUILT_PRODUCTS_DIR";
+};
+85C030B69E59F0AD7889CA21 = {
+isa = "PBXSourcesBuildPhase";
+buildActionMask = "2147483647";
+files = ();
+runOnlyForDeploymentPostprocessing = "0";
+};
+2A32323D16268456E6BCDADB = {
+isa = "PBXFrameworksBuildPhase";
+buildActionMask = "2147483647";
+files = ();
+runOnlyForDeploymentPostprocessing = "0";
+};
+88AAC163C455BA24583D0D8F = {
+isa = "PBXResourcesBuildPhase";
+buildActionMask = "2147483647";
+files = ();
+runOnlyForDeploymentPostprocessing = "0";
+};
+2D9EBB251B45CDDEAFF6182F = {
+isa = "XCBuildConfiguration";
+buildSettings = {
+IPHONEOS_DEPLOYMENT_TARGET = "17.0";
+SDKROOT = "iphoneos";
+SWIFT_VERSION = "5.0";
+CLANG_ENABLE_MODULES = "YES";
+CLANG_ENABLE_OBJC_ARC = "YES";
+ENABLE_USER_SCRIPT_SANDBOXING = "YES";
+CODE_SIGN_STYLE = "Automatic";
+TARGETED_DEVICE_FAMILY = "1";
+GENERATE_INFOPLIST_FILE = "YES";
+MARKETING_VERSION = "1.0";
+CURRENT_PROJECT_VERSION = "1";
+PRODUCT_NAME = "$(TARGET_NAME)";
+PRODUCT_BUNDLE_IDENTIFIER = "com.yinyueyang.notessix";
+SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+DEBUG_INFORMATION_FORMAT = "dwarf";
+SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+ENABLE_TESTABILITY = "YES";
+ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon";
+INFOPLIST_FILE = "NotesSix/Info.plist";
+INFOPLIST_KEY_CFBundleDisplayName = "Notes";
+INFOPLIST_KEY_UILaunchScreen_Generation = "YES";
+INFOPLIST_KEY_UIStatusBarStyle = "UIStatusBarStyleDarkContent";
+INFOPLIST_KEY_UIUserInterfaceStyle = "Light";
+INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+};
+name = "Debug";
+};
+CD38C13DC41B241FCD4B8D79 = {
+isa = "XCBuildConfiguration";
+buildSettings = {
+IPHONEOS_DEPLOYMENT_TARGET = "17.0";
+SDKROOT = "iphoneos";
+SWIFT_VERSION = "5.0";
+CLANG_ENABLE_MODULES = "YES";
+CLANG_ENABLE_OBJC_ARC = "YES";
+ENABLE_USER_SCRIPT_SANDBOXING = "YES";
+CODE_SIGN_STYLE = "Automatic";
+TARGETED_DEVICE_FAMILY = "1";
+GENERATE_INFOPLIST_FILE = "YES";
+MARKETING_VERSION = "1.0";
+CURRENT_PROJECT_VERSION = "1";
+PRODUCT_NAME = "$(TARGET_NAME)";
+PRODUCT_BUNDLE_IDENTIFIER = "com.yinyueyang.notessix";
+SWIFT_OPTIMIZATION_LEVEL = "-O";
+DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+ASSETCATALOG_COMPILER_APPICON_NAME = "AppIcon";
+INFOPLIST_FILE = "NotesSix/Info.plist";
+INFOPLIST_KEY_CFBundleDisplayName = "Notes";
+INFOPLIST_KEY_UILaunchScreen_Generation = "YES";
+INFOPLIST_KEY_UIStatusBarStyle = "UIStatusBarStyleDarkContent";
+INFOPLIST_KEY_UIUserInterfaceStyle = "Light";
+INFOPLIST_KEY_UISupportedInterfaceOrientations = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+};
+name = "Release";
+};
+706B29EB1A0A5A8300D54532 = {
+isa = "XCConfigurationList";
+buildConfigurations = ("2D9EBB251B45CDDEAFF6182F", "CD38C13DC41B241FCD4B8D79");
+defaultConfigurationIsVisible = "0";
+defaultConfigurationName = "Release";
+};
+F6FFA5DDBC2029800ED0C3D3 = {
+isa = "PBXNativeTarget";
+buildConfigurationList = "706B29EB1A0A5A8300D54532";
+buildPhases = ("85C030B69E59F0AD7889CA21", "2A32323D16268456E6BCDADB", "88AAC163C455BA24583D0D8F");
+buildRules = ();
+dependencies = ();
+fileSystemSynchronizedGroups = ("7B3922E2248CA7B20844DFD6");
+name = "NotesSix";
+productName = "NotesSix";
+productReference = "0189DD5ABFD1A54D55D55429";
+productType = "com.apple.product-type.application";
+};
+BE5173873F2583671666C4CB = {
+isa = "PBXFileSystemSynchronizedRootGroup";
+path = "NotesSixTests";
+sourceTree = "<group>";
+};
+BE409276116F4ABDE432F8DE = {
+isa = "PBXFileReference";
+explicitFileType = "wrapper.cfbundle";
+path = "NotesSixTests.xctest";
+sourceTree = "BUILT_PRODUCTS_DIR";
+};
+E90FA67F24E3A5D350558C61 = {
+isa = "PBXSourcesBuildPhase";
+buildActionMask = "2147483647";
+files = ();
+runOnlyForDeploymentPostprocessing = "0";
+};
+D55EC58D46059431EBF4C334 = {
+isa = "PBXFrameworksBuildPhase";
+buildActionMask = "2147483647";
+files = ();
+runOnlyForDeploymentPostprocessing = "0";
+};
+55520542EDDA83CBA3D5E4DE = {
+isa = "PBXResourcesBuildPhase";
+buildActionMask = "2147483647";
+files = ();
+runOnlyForDeploymentPostprocessing = "0";
+};
+7BD01D051BCA0AA46C0D2B82 = {
+isa = "XCBuildConfiguration";
+buildSettings = {
+IPHONEOS_DEPLOYMENT_TARGET = "17.0";
+SDKROOT = "iphoneos";
+SWIFT_VERSION = "5.0";
+CLANG_ENABLE_MODULES = "YES";
+CLANG_ENABLE_OBJC_ARC = "YES";
+ENABLE_USER_SCRIPT_SANDBOXING = "YES";
+CODE_SIGN_STYLE = "Automatic";
+TARGETED_DEVICE_FAMILY = "1";
+GENERATE_INFOPLIST_FILE = "YES";
+MARKETING_VERSION = "1.0";
+CURRENT_PROJECT_VERSION = "1";
+PRODUCT_NAME = "$(TARGET_NAME)";
+PRODUCT_BUNDLE_IDENTIFIER = "com.yinyueyang.notessixtests";
+SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+DEBUG_INFORMATION_FORMAT = "dwarf";
+SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+ENABLE_TESTABILITY = "YES";
+TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NotesSix.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/NotesSix";
+BUNDLE_LOADER = "$(TEST_HOST)";
+};
+name = "Debug";
+};
+D50AF8B2FC3808FF25C1AACF = {
+isa = "XCBuildConfiguration";
+buildSettings = {
+IPHONEOS_DEPLOYMENT_TARGET = "17.0";
+SDKROOT = "iphoneos";
+SWIFT_VERSION = "5.0";
+CLANG_ENABLE_MODULES = "YES";
+CLANG_ENABLE_OBJC_ARC = "YES";
+ENABLE_USER_SCRIPT_SANDBOXING = "YES";
+CODE_SIGN_STYLE = "Automatic";
+TARGETED_DEVICE_FAMILY = "1";
+GENERATE_INFOPLIST_FILE = "YES";
+MARKETING_VERSION = "1.0";
+CURRENT_PROJECT_VERSION = "1";
+PRODUCT_NAME = "$(TARGET_NAME)";
+PRODUCT_BUNDLE_IDENTIFIER = "com.yinyueyang.notessixtests";
+SWIFT_OPTIMIZATION_LEVEL = "-O";
+DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+TEST_HOST = "$(BUILT_PRODUCTS_DIR)/NotesSix.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/NotesSix";
+BUNDLE_LOADER = "$(TEST_HOST)";
+};
+name = "Release";
+};
+BCA63E58F394F7323A130CA0 = {
+isa = "XCConfigurationList";
+buildConfigurations = ("7BD01D051BCA0AA46C0D2B82", "D50AF8B2FC3808FF25C1AACF");
+defaultConfigurationIsVisible = "0";
+defaultConfigurationName = "Release";
+};
+DE39C311176990D10C7A9883 = {
+isa = "PBXContainerItemProxy";
+containerPortal = "98F54143AB4E86B28C3AFEE0";
+proxyType = "1";
+remoteGlobalIDString = "F6FFA5DDBC2029800ED0C3D3";
+remoteInfo = "NotesSix";
+};
+25D47B950D283E0278C99B66 = {
+isa = "PBXTargetDependency";
+target = "F6FFA5DDBC2029800ED0C3D3";
+targetProxy = "DE39C311176990D10C7A9883";
+};
+9609BD5C3DD163FBABF3BACA = {
+isa = "PBXNativeTarget";
+buildConfigurationList = "BCA63E58F394F7323A130CA0";
+buildPhases = ("E90FA67F24E3A5D350558C61", "D55EC58D46059431EBF4C334", "55520542EDDA83CBA3D5E4DE");
+buildRules = ();
+dependencies = ("25D47B950D283E0278C99B66");
+fileSystemSynchronizedGroups = ("BE5173873F2583671666C4CB");
+name = "NotesSixTests";
+productName = "NotesSixTests";
+productReference = "BE409276116F4ABDE432F8DE";
+productType = "com.apple.product-type.bundle.unit-test";
+};
+598649592FFB3CF201CAE103 = {
+isa = "PBXFileSystemSynchronizedRootGroup";
+path = "NotesSixUITests";
+sourceTree = "<group>";
+};
+3A6C9A850395F276F8A20082 = {
+isa = "PBXFileReference";
+explicitFileType = "wrapper.cfbundle";
+path = "NotesSixUITests.xctest";
+sourceTree = "BUILT_PRODUCTS_DIR";
+};
+1D300693E640725385271DFE = {
+isa = "PBXSourcesBuildPhase";
+buildActionMask = "2147483647";
+files = ();
+runOnlyForDeploymentPostprocessing = "0";
+};
+BD06585B602FD6E5B995FDA0 = {
+isa = "PBXFrameworksBuildPhase";
+buildActionMask = "2147483647";
+files = ();
+runOnlyForDeploymentPostprocessing = "0";
+};
+9B16734B18AEF8026E8482A0 = {
+isa = "PBXResourcesBuildPhase";
+buildActionMask = "2147483647";
+files = ();
+runOnlyForDeploymentPostprocessing = "0";
+};
+0FB477ACFCD81ED1217D0294 = {
+isa = "XCBuildConfiguration";
+buildSettings = {
+IPHONEOS_DEPLOYMENT_TARGET = "17.0";
+SDKROOT = "iphoneos";
+SWIFT_VERSION = "5.0";
+CLANG_ENABLE_MODULES = "YES";
+CLANG_ENABLE_OBJC_ARC = "YES";
+ENABLE_USER_SCRIPT_SANDBOXING = "YES";
+CODE_SIGN_STYLE = "Automatic";
+TARGETED_DEVICE_FAMILY = "1";
+GENERATE_INFOPLIST_FILE = "YES";
+MARKETING_VERSION = "1.0";
+CURRENT_PROJECT_VERSION = "1";
+PRODUCT_NAME = "$(TARGET_NAME)";
+PRODUCT_BUNDLE_IDENTIFIER = "com.yinyueyang.notessixuitests";
+SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+DEBUG_INFORMATION_FORMAT = "dwarf";
+SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+ENABLE_TESTABILITY = "YES";
+TEST_TARGET_NAME = "NotesSix";
+};
+name = "Debug";
+};
+D8778F10B8B0A426ACAF8777 = {
+isa = "XCBuildConfiguration";
+buildSettings = {
+IPHONEOS_DEPLOYMENT_TARGET = "17.0";
+SDKROOT = "iphoneos";
+SWIFT_VERSION = "5.0";
+CLANG_ENABLE_MODULES = "YES";
+CLANG_ENABLE_OBJC_ARC = "YES";
+ENABLE_USER_SCRIPT_SANDBOXING = "YES";
+CODE_SIGN_STYLE = "Automatic";
+TARGETED_DEVICE_FAMILY = "1";
+GENERATE_INFOPLIST_FILE = "YES";
+MARKETING_VERSION = "1.0";
+CURRENT_PROJECT_VERSION = "1";
+PRODUCT_NAME = "$(TARGET_NAME)";
+PRODUCT_BUNDLE_IDENTIFIER = "com.yinyueyang.notessixuitests";
+SWIFT_OPTIMIZATION_LEVEL = "-O";
+DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+TEST_TARGET_NAME = "NotesSix";
+};
+name = "Release";
+};
+41DD508432900CBE9FB71CC2 = {
+isa = "XCConfigurationList";
+buildConfigurations = ("0FB477ACFCD81ED1217D0294", "D8778F10B8B0A426ACAF8777");
+defaultConfigurationIsVisible = "0";
+defaultConfigurationName = "Release";
+};
+AECBB976F900C31C98BA8037 = {
+isa = "PBXContainerItemProxy";
+containerPortal = "98F54143AB4E86B28C3AFEE0";
+proxyType = "1";
+remoteGlobalIDString = "F6FFA5DDBC2029800ED0C3D3";
+remoteInfo = "NotesSix";
+};
+245D1A1F9861A7033B9DBAB1 = {
+isa = "PBXTargetDependency";
+target = "F6FFA5DDBC2029800ED0C3D3";
+targetProxy = "AECBB976F900C31C98BA8037";
+};
+F89F906D71D50DC73498A1B3 = {
+isa = "PBXNativeTarget";
+buildConfigurationList = "41DD508432900CBE9FB71CC2";
+buildPhases = ("1D300693E640725385271DFE", "BD06585B602FD6E5B995FDA0", "9B16734B18AEF8026E8482A0");
+buildRules = ();
+dependencies = ("245D1A1F9861A7033B9DBAB1");
+fileSystemSynchronizedGroups = ("598649592FFB3CF201CAE103");
+name = "NotesSixUITests";
+productName = "NotesSixUITests";
+productReference = "3A6C9A850395F276F8A20082";
+productType = "com.apple.product-type.bundle.ui-testing";
+};
+FBDC4F23F93125BBEEAE800C = {
+isa = "PBXGroup";
+children = ("0189DD5ABFD1A54D55D55429", "BE409276116F4ABDE432F8DE", "3A6C9A850395F276F8A20082");
+name = "Products";
+sourceTree = "<group>";
+};
+B28B7AF69320201D1CF206EB = {
+isa = "PBXGroup";
+children = ("7B3922E2248CA7B20844DFD6", "BE5173873F2583671666C4CB", "598649592FFB3CF201CAE103", "FBDC4F23F93125BBEEAE800C");
+sourceTree = "<group>";
+};
+ED8772ADEC3A6C25161BC957 = {
+isa = "XCBuildConfiguration";
+buildSettings = {
+ALWAYS_SEARCH_USER_PATHS = "NO";
+CLANG_WARN_DOCUMENTATION_COMMENTS = "YES";
+GCC_WARN_UNUSED_VARIABLE = "YES";
+};
+name = "Debug";
+};
+00F209874A1F7309F6DCEAA7 = {
+isa = "XCBuildConfiguration";
+buildSettings = {
+ALWAYS_SEARCH_USER_PATHS = "NO";
+CLANG_WARN_DOCUMENTATION_COMMENTS = "YES";
+GCC_WARN_UNUSED_VARIABLE = "YES";
+};
+name = "Release";
+};
+640DC9EFD529235A8D9E2727 = {
+isa = "XCConfigurationList";
+buildConfigurations = ("ED8772ADEC3A6C25161BC957", "00F209874A1F7309F6DCEAA7");
+defaultConfigurationIsVisible = "0";
+defaultConfigurationName = "Release";
+};
+98F54143AB4E86B28C3AFEE0 = {
+isa = "PBXProject";
+attributes = {
+BuildIndependentTargetsInParallel = "YES";
+LastUpgradeCheck = "2700";
+TargetAttributes = {
+F6FFA5DDBC2029800ED0C3D3 = {
+CreatedOnToolsVersion = "27.0";
+};
+9609BD5C3DD163FBABF3BACA = {
+CreatedOnToolsVersion = "27.0";
+};
+F89F906D71D50DC73498A1B3 = {
+CreatedOnToolsVersion = "27.0";
+};
+};
+};
+buildConfigurationList = "640DC9EFD529235A8D9E2727";
+compatibilityVersion = "Xcode 16.0";
+developmentRegion = "en";
+hasScannedForEncodings = "0";
+knownRegions = ("en", "zh-Hans", "Base");
+mainGroup = "B28B7AF69320201D1CF206EB";
+productRefGroup = "FBDC4F23F93125BBEEAE800C";
+projectDirPath = "";
+projectRoot = "";
+targets = ("F6FFA5DDBC2029800ED0C3D3", "9609BD5C3DD163FBABF3BACA", "F89F906D71D50DC73498A1B3");
+preferredProjectObjectVersion = "77";
+};
+};
+rootObject = "98F54143AB4E86B28C3AFEE0";
+}
