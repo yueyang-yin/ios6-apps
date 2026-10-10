@@ -4,4 +4,6 @@
    </FileRef>
    <FileRef location="group:apps/notes/NotesSix.xcodeproj">
    </FileRef>
+   <FileRef location="group:apps/calculator/CalculatorSix.xcodeproj">
+   </FileRef>
 </Workspace>
