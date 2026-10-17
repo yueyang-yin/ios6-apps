@@ -6,7 +6,7 @@ Camera Roll and Photos compile their matching graphite navigation and glossy con
 
 ## Getting started
 
-Open `iOS6Apps.xcworkspace` at the collection root and select the app's scheme. Weather uses `WeatherSix`; Notes uses `NotesSix`; Calculator uses `CalculatorSix`; Compass uses `CompassSix`; Clock uses `ClockSix`; Calendar uses `CalendarSix`; Reminders uses `RemindersSix`; Camera uses `CameraSix`; Photos uses `PhotosSix`; Maps uses `MapsSix`. All require iOS 17 or later.
+Open `iOS6Apps.xcworkspace` at the collection root and select the app's scheme. Weather uses `WeatherSix`; Notes uses `NotesSix`; Calculator uses `CalculatorSix`; Compass uses `CompassSix`; Clock uses `ClockSix`; Calendar uses `CalendarSix`; Reminders uses `RemindersSix`; Camera uses `CameraSix`; Photos uses `PhotosSix`; Maps uses `MapsSix`; Stocks uses `StocksSix`. All require iOS 17 or later.
 
 | App | Project | Documentation |
 | --- | --- | --- |
@@ -20,6 +20,7 @@ Open `iOS6Apps.xcworkspace` at the collection root and select the app's scheme. 
 | Camera | `apps/camera/CameraSix.xcodeproj` | [Run instructions](apps/camera/README.md), [Verification record](apps/camera/docs/verification.md) |
 | Photos | `apps/photos/PhotosSix.xcodeproj` | [Run instructions](apps/photos/README.md), [Verification record](apps/photos/docs/verification.md) |
 | Maps | `apps/maps/MapsSix.xcodeproj` | [Run instructions](apps/maps/README.md), [Verification record](apps/maps/docs/verification.md) |
+| Stocks | `apps/stocks/StocksSix.xcodeproj` | [Run instructions](apps/stocks/README.md), [Verification record](apps/stocks/docs/verification.md) |
 
 Weather defaults to Celsius, and its app icon displays `23°`. Use Current Location requests foreground location access and loads live weather. If access was denied, Open Settings provides a recovery path. Set a simulated location using Simulator → Features → Location when running on Simulator.
 
@@ -41,6 +42,8 @@ Photos recreates the graphite metal navigation, compact white album rows, parent
 
 Maps recreates silver search/navigation chrome, red pushpins, the curled map corner and linen options, and green navigation signs. It uses current Apple MapKit maps, real place search, driving/walking routes, location updates, foreground voice guidance, satellite/Flyover imagery, traffic, persistent bookmarks and recents, sharing, and printing. It follows Weather's English/Simplified Chinese language rules. Map data, coverage, and system-owned panels use the current OS; background navigation is available through the Apple Maps action.
 
+Stocks recreates the alternating blue/slate watchlist, dimensional change buttons, three-page summary/chart/news area, and rotation-driven full-screen chart. It supports Yahoo Finance quotes, symbol search, news, local watchlist editing, cached data, and Weather-compatible English/Simplified Chinese. Launch with `--demo` for explicitly labeled isolated sample data.
+
 ## Shared design language
 
 Use the [shared iOS 6 design language](docs/design-language.md) where its patterns fit the screen. Applicable Notes, detail, management, and settings screens can extend the body color/texture through status and bottom safe areas while keeping navigation as an independent panel. Weather's main forecast retains its own original glass panel and paging layout. Specialized main screens do not need the Notes/settings frame; each app keeps its historical materials, typography, dimensional controls, and motion.
@@ -55,6 +58,14 @@ ios6-apps/
 ├── README.md
 ├── iOS6Apps.xcworkspace/
 ├── apps/
+│   ├── stocks/
+│   │   ├── StocksSix.xcodeproj/
+│   │   ├── StocksSix/
+│   │   ├── StocksSixTests/
+│   │   ├── StocksSixUITests/
+│   │   ├── scripts/
+│   │   ├── docs/
+│   │   └── README.md
 │   ├── maps/
 │   ├── photos/
 │   │   ├── PhotosSix.xcodeproj/

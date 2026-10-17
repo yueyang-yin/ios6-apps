@@ -20,4 +20,6 @@
    </FileRef>
    <FileRef location="group:apps/maps/MapsSix.xcodeproj">
    </FileRef>
+   <FileRef location="group:apps/stocks/StocksSix.xcodeproj">
+   </FileRef>
 </Workspace>
