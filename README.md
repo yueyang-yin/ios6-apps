@@ -8,7 +8,7 @@ Camera Roll and Photos compile their matching graphite navigation and glossy con
 
 [![XERJ Corpus Hub contributor](https://hub.xerj.org/contributors/yueyang-yin/badge.svg)](https://hub.xerj.org/contributors/yueyang-yin)
 
-The [Passbook implementation](apps/passbook/README.md) was selected for inclusion in the [XERJ Corpus Hub](https://hub.xerj.org/corpus/yueyang-yin--ios6-apps), an open reference index for AI coding agents. The selection highlights commit [`bc089bb`](https://github.com/yueyang-yin/ios6-apps/commit/bc089bb9fdc2d8f0cdaa6ec61afb0918d8a12283); the corpus is currently under licence review and is not yet available in the hub registry.
+The [Passbook implementation](apps/passbook/README.md) was selected for inclusion in the [XERJ Corpus Hub](https://hub.xerj.org/corpus/yueyang-yin--ios6-apps), an open reference index for AI coding agents. The selection highlights commit [`bc089bb`](https://github.com/yueyang-yin/ios6-apps/commit/bc089bb9fdc2d8f0cdaa6ec61afb0918d8a12283).
 
 ## Getting started
 
