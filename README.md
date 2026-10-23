@@ -4,6 +4,12 @@ A collection of native app recreations inspired by the skeuomorphic design of iO
 
 Camera Roll and Photos compile their matching graphite navigation and glossy controls from [`shared/PhotoChrome`](shared/PhotoChrome/ClassicPhotoChrome.swift). Keep that directory alongside `apps/` when opening either independent project.
 
+## External recognition
+
+[![XERJ Corpus Hub contributor](https://hub.xerj.org/contributors/yueyang-yin/badge.svg)](https://hub.xerj.org/contributors/yueyang-yin)
+
+The [Passbook implementation](apps/passbook/README.md) was selected for inclusion in the [XERJ Corpus Hub](https://hub.xerj.org/corpus/yueyang-yin--ios6-apps), an open reference index for AI coding agents. The selection highlights commit [`bc089bb`](https://github.com/yueyang-yin/ios6-apps/commit/bc089bb9fdc2d8f0cdaa6ec61afb0918d8a12283); the corpus is currently under licence review and is not yet available in the hub registry.
+
 ## Getting started
 
 Open `iOS6Apps.xcworkspace` at the collection root and select the app's scheme. Weather uses `WeatherSix`; Notes uses `NotesSix`; Calculator uses `CalculatorSix`; Compass uses `CompassSix`; Clock uses `ClockSix`; Calendar uses `CalendarSix`; Reminders uses `RemindersSix`; Camera uses `CameraSix`; Photos uses `PhotosSix`; Maps uses `MapsSix`; Stocks uses `StocksSix`; Passbook uses `PassbookSix`. All require iOS 17 or later.
